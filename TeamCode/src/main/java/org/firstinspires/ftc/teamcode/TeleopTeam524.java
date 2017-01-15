@@ -99,10 +99,6 @@ public class TeleopTeam524 extends MecanumOpMode {
         etKeeper = hardwareMap.servo.get("liftKeep");
         teamColor = "r";
 
-        sensorService = (SensorManager) hardwareMap.appContext.getSystemService(Context.SENSOR_SERVICE);
-        sensorService.registerListener(this,
-                sensorService.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),
-                SensorManager.SENSOR_DELAY_NORMAL);
 
         ballKeeper.setPosition(0);
         flicker.setPosition(0.55);

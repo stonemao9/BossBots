@@ -34,7 +34,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
     *  motor1    motor2
     */
 
-public abstract class MecanumOpMode extends OpMode implements SensorEventListener {
+public abstract class MecanumOpMode extends OpMode {
 
     public DcMotor motor1;
     public DcMotor motor2;
@@ -42,8 +42,7 @@ public abstract class MecanumOpMode extends OpMode implements SensorEventListene
     public DcMotor motor4;
 
     public String teamColor;
-    
-    public SensorManager sensorService;
+
     public AccelerationSensor accSense;
     public GyroSensor gyroSense;
 
@@ -54,6 +53,8 @@ public abstract class MecanumOpMode extends OpMode implements SensorEventListene
     public double gyroX;
     public double gyroY;
     public double gyroZ;
+
+    public boolean isDone=false;
 
 
     private boolean slowMode = false;
@@ -171,27 +172,11 @@ public abstract class MecanumOpMode extends OpMode implements SensorEventListene
         else
             return length = length / 2;
     }
-
-
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        // Ignoring this for now
-    }
-    @Override
-    public void onSensorChanged(SensorEvent sensorEvent) {
-//        switch (sensorEvent.sensor.getType()) {
-//            case Sensor.TYPE_ACCELEROMETER:
-//                accX = sensorEvent.values[0];
-//                accY = sensorEvent.values[1];
-//                accZ = sensorEvent.values[2];
-//                break;
-//        }
-        Acceleration a = accSense.getAcceleration();
-        accX = a.xAccel;
-        accY = a.yAccel;
-        accZ = a.zAccel;
-
-        gyroX = gyroSense.rawX();
-        gyroY = gyroSense.rawY();
-        gyroZ = gyroSense.rawZ();
+    public void updateSensor(boolean base){
+            Acceleration a = accSense.getAcceleration();
+            accX = a.xAccel;
+            accY = a.yAccel;
+            accZ = a.zAccel;
+            gyroX = gyroSense.getRotationFraction();
     }
 }

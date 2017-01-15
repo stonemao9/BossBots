@@ -132,19 +132,6 @@ public class NewAutonomous524 extends MecanumOpMode {
 
         teamColor = "r";
 
-        //Initialize sensor service
-        sensorService = (SensorManager) hardwareMap.appContext.getSystemService(Context.SENSOR_SERVICE);
-        telemetry.addData("Status", "Created SensorService");
-        //Magnetometer initialization
-        magnetometer = sensorService.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-        telemetry.addData("Status", "Created Magnenetometer");
-        //Accelerometer initialization
-        accelerometer = sensorService.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        telemetry.addData("Status", "Created Accelerometer");
-        sensorService.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_GAME);
-        telemetry.addData("Status", "Registered acclerometer");
-        sensorService.registerListener(this, magnetometer, SensorManager.SENSOR_DELAY_GAME);
-        telemetry.addData("Status", "Registered magnetometer");
         //NXT
         accelNXT = hardwareMap.accelerationSensor.get("acc");
         gyroNXT = hardwareMap.gyroSensor.get("gyro");
