@@ -37,6 +37,7 @@ import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.support.annotation.BoolRes;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -60,6 +61,8 @@ public class TeleopTeam524 extends MecanumOpMode {
     private Servo ballKeeper;
     private Servo flicker;
     private Servo etKeeper;
+    private Servo idleGear;
+    private Boolean idle = false;
 
     /*
     *   Motor position
@@ -97,12 +100,13 @@ public class TeleopTeam524 extends MecanumOpMode {
         ballKeeper = hardwareMap.servo.get("ballKeeper");
         flicker = hardwareMap.servo.get("flicker");
         etKeeper = hardwareMap.servo.get("liftKeep");
-        teamColor = "r";
+        idleGear = hardwareMap.servo.get("idleGear");
 
+        teamColor = "r";
 
         ballKeeper.setPosition(0);
         flicker.setPosition(0.55);
-        etKeeper.setPosition(0);
+        etKeeper.setPosition(0.72);
     }
 
     /*
@@ -144,14 +148,28 @@ public class TeleopTeam524 extends MecanumOpMode {
             lexanShooter.setPower(0.5);
         else
             lexanShooter.setPower(0);
+
         if (gamepad2.a)
             flicker.setPosition(0.2);
         else
             flicker.setPosition(0.55);
 
+        if (gamepad2.b) {
+            idle = !idle;
+            try {
+                Thread.sleep(250);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        if (idle)
+            idleGear.setPosition(1.1);
+        else
+            idleGear.setPosition(0.72);
+
         //Servo for releasing the eighty-twenty
         if (gamepad2.y)
-            etKeeper.setPosition(0.5);
+            etKeeper.setPosition(1);
     }
 
     /*
