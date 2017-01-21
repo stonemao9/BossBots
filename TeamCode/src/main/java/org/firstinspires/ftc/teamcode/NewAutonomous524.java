@@ -32,6 +32,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package org.firstinspires.ftc.teamcode;
 
+
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -216,7 +217,7 @@ public class NewAutonomous524 extends MecanumOpMode {
     /*
      * Code to run REPEATEDLY after the driver hits PLAY but before they hit STOP
      */
-    private boolean task1, task2, task3;
+    private boolean task1, task2, task3, task4;
 
     @Override
     public void loop() {
@@ -230,6 +231,35 @@ public class NewAutonomous524 extends MecanumOpMode {
                 coord[0] = ;
                 coord[0] = ;
                  */
+               coord={0,32,0};
+                task1=true;
+            }
+        } else if (!task2 )  {
+            // if it gets to that position
+            if(goToPosition(coord)){
+                //set new coord
+                /**
+                 coord[0] = ;
+                 coord[0] = ;
+                 coord[0] = ;
+                 */
+                task2=true;
+            }
+        } else if (!task3 )  {
+            // if it gets to that position
+            colorSense(teamColor);
+            task3=true;
+        } else if (!task4 )  {
+            // if it gets to that position
+            if(goToPosition(coord)){
+                //set new coord
+                /**
+                 coord[0] = ;
+                 coord[0] = ;
+                 coord[0] = ;
+                 */
+               shoot();
+                task4=true;
             }
         }
     }
