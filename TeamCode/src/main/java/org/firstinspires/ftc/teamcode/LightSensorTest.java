@@ -37,6 +37,8 @@ public class LightSensorTest extends MecanumOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     FileOutputStream fou;
     OutputStreamWriter outputStreamWriter;
+    FileWriter writer;
+    File out;
     private String output = "";
 
     @Override
@@ -50,18 +52,27 @@ public class LightSensorTest extends MecanumOpMode {
         motor4.setDirection(DcMotorSimple.Direction.REVERSE);
         accSense = hardwareMap.accelerationSensor.get("acc");
         gyroSense = hardwareMap.gyroSensor.get("gyro");
+
+        try {
+            out = new File("/sdcard/sample.txt");
+            Log.d("FTC-init", "File class created");
+            out.createNewFile();
+            Log.d("FTC-init", "File class created new file");
+            fou = new FileOutputStream(out);
+            Log.d("FTC-init", "FileOutputStream created");
+            outputStreamWriter = new OutputStreamWriter(fou);
+            Log.d("FTC-init", "OutputStreamWriter Created");
+        } catch (IOException e) {
+            Log.e("FTC-INIT", e.toString());
+        }
     }
 
     @Override
     public void init_loop() {
-        try {
-            fou = hardwareMap.appContext.openFileOutput("data_new.txt", MODE_APPEND);
-            outputStreamWriter = new OutputStreamWriter(fou);
-            telemetry.addData("created", "output stream writer");
-        } catch (FileNotFoundException e) {
-            Log.e("Error", "INIT-tried creating fileoutputstream" + e.toString());
-            telemetry.addData("Error", e);
-        }
+        updateSensor(true);
+        telemetry.addData("accX", accX);
+        telemetry.addData("accY", accY);
+        telemetry.addData("accZ", accZ);
     }
 
     @Override
@@ -71,31 +82,36 @@ public class LightSensorTest extends MecanumOpMode {
 
     @Override
     public void loop() {
+
         telemetry.addData("Status", "Running: " + runtime.toString());
         updateSensor(true);
-        driveOneJoystick(gamepad1, "left");
-        telemetry.addData("accX", accX);
-        telemetry.addData("accY", accY);
-        telemetry.addData("accZ", accZ);
-        output += runtime.seconds()+","+accX + "," + accY + "," + accZ + "\n";
+        if (runtime.milliseconds() < 2000) {
+            driveAngle(Math.PI/2,1);
+            telemetry.addData("accX", accX);
+            telemetry.addData("accY", accY);
+            telemetry.addData("accZ", accZ);
+            output += runtime.seconds() + "," + accX + "," + accY + "," + accZ + "\n";
+        } else if(runtime.milliseconds()<3000) {
+            driveAngle(Math.PI/2,0);
+        } else {
+            stop();
+        }
     }
 
     public void stop() {
-        FileWriter writer;
-        File out = new File("sample.txt");
-        Log.d("FTC STOP","writing file");
+        Log.d("FTC STOP", "writing file");
         try {
-            writer = new FileWriter(out,true);
-            writer.write(output);
-            Log.d("FTC WRITER","WRITING");
-            writer.flush();
-            writer.close();
-            Log.w("FTC Done",out.getPath());
+            outputStreamWriter.append(output);
+            Log.d("FTC-stop", "OutputStreamWriter successfully appended output");
+            outputStreamWriter.close();
+            Log.d("FTC-stop", "OutputStream Writer closed");
+            fou.close();
+            Log.d("FTC-stop", "Fou closed");
+            Log.w("FTC Done", out.getPath());
         } catch (IOException e) {
             e.printStackTrace();
-            Log.e("FTC ERROR", output);
+            Log.e("Error-FTC", e.toString());
         }
-
     }
 
 }
