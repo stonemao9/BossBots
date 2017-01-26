@@ -107,6 +107,7 @@ public class TeleopTeam524 extends MecanumOpMode {
         ballKeeper.setPosition(0);
         flicker.setPosition(0.55);
         etKeeper.setPosition(0.72);
+        idleGear.setPosition(0.72);
     }
 
     /*
