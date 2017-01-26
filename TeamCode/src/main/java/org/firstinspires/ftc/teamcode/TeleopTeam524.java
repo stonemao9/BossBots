@@ -101,13 +101,13 @@ public class TeleopTeam524 extends MecanumOpMode {
         flicker = hardwareMap.servo.get("flicker");
         etKeeper = hardwareMap.servo.get("liftKeep");
         idleGear = hardwareMap.servo.get("idleGear");
-        idleGear.setPosition(0.72);
 
         teamColor = "r";
 
         ballKeeper.setPosition(0);
         flicker.setPosition(0.55);
-        etKeeper.setPosition(0);
+        etKeeper.setPosition(0.72);
+        idleGear.setPosition(0.72);
     }
 
     /*
@@ -143,7 +143,7 @@ public class TeleopTeam524 extends MecanumOpMode {
          */
         belt.setPower(gamepad2.left_trigger * revDirection());
         sweeper.setPower(gamepad2.left_trigger * revDirection());
-        eightyTwenty.setPower(revDirection1() * (gamepad2.right_trigger));
+        eightyTwenty.setPower(revDirection() * gamepad2.right_trigger);
 
         if (gamepad2.x)
             lexanShooter.setPower(0.5);
@@ -188,12 +188,6 @@ public class TeleopTeam524 extends MecanumOpMode {
     public double revDirection() {
         if (gamepad2.right_bumper || gamepad2.left_bumper) {
             return -0.3;
-        } else
-            return 1;
-    }
-    public double revDirection1() {
-        if (gamepad2.right_bumper || gamepad2.left_bumper) {
-            return -0.1;
         } else
             return 1;
     }
