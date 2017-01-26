@@ -156,6 +156,10 @@ public class NewAutonomous524 extends MecanumOpMode {
     private boolean task7 = false;
     private boolean task8 = false;
     private boolean task9 = false;
+    private boolean task10 = false;
+    private boolean task11 = false;
+    private boolean task12 = false;
+    private boolean task13 = false;
     private double tempTime=0;
     @Override
     public void loop() {
@@ -191,7 +195,7 @@ public class NewAutonomous524 extends MecanumOpMode {
             task2=true;
 
         } else if(!task3){
-            if(goToPosition(1.55)<0.13){
+            if(goToPosition(1.52)<0.13){
                 task3=true;
                 driveAngle(0,0);
                 tempTime=runtime.milliseconds();
@@ -215,47 +219,63 @@ public class NewAutonomous524 extends MecanumOpMode {
             }
             telemetry.addData("Task","Turning");
         } else if(!task5){
-            if(runtime.milliseconds()<tempTime+1500){
-                driveAngle(10,0.7);
+            if(runtime.milliseconds()<tempTime+1100){
+                driveAngle(1*Math.PI/180,0.6);
             } else {
                 driveAngle(0,0);
                 tempTime=runtime.milliseconds();
                 task5=true;
             }
             telemetry.addData("Task","Moving at zero degrees");
-        } else if(!task6){
+        } else if(!task8){
+            telemetry.addData("color!!!",sameColor(teamColor,color));
+            if(sameColor(teamColor,color)){
+                if(runtime.milliseconds()<tempTime+600){
+                    driveAngle(0,1);
+                } else {
+                    driveAngle(0,0);
+                    task8 = true;
+                    task9 = true;
+                    task10 = true;
+                }
+            } else {
+                telemetry.addData("color123123",false);
+                task8 = true;
+            }
+        } else if(!task9){
             totx = tottotx;
-            task6=true;
-        } else if(!task7){
-            if(goToPosition(0.3)<0.13){
-                task7=true;
+            task9=true;
+        } else if(!task10){
+            telemetry.addData("totx",totx);
+            telemetry.addData("Task","Moving away from wrong color");
+            telemetry.addData("tottotx",tottotx);
+            if(goToPosition(-0.3)<0.13){
+                task10=true;
                 driveAngle(0,0);
                 tempTime=runtime.milliseconds();
             }
-            telemetry.addData("totx",totx);
-            telemetry.addData("tottotx",tottotx);
-            telemetry.addData("Task","Moving towards beacon");
-        } else if(!task8){
-            if(sameColor(teamColor,color)){
-
-            }
         }
     }
-
-    private boolean sameColor(String teamColor, ColorSensor color) {
-        int[][] redA={{255,0,0},{0,0,255}};
-        int row=0;
-        if(teamColor.equals("r")){
-            row = 0;
+    private void press(double tempTime){
+        if(runtime.milliseconds()<tempTime+600){
+            driveAngle(0,1);
         } else {
-            row = 1;
+            driveAngle(0,0);
         }
-        if((color.red()>redA[row][0]-10 || color.red()<redA[row][0]+10)&&
-                (color.green()>redA[row][1]-10 || color.red()<redA[row][1]+10) &&
-                (color.blue()>redA[row][2]-10 || color.blue()<redA[row][2]+10)){
-            return true;
+    }
+    private boolean sameColor(String teamColor, ColorSensor color) {
+        if(teamColor.equals("r")){
+            if(color.red()>color.blue()){
+                return true;
+            } else{
+                return false;
+            }
         } else {
-            return false;
+            if(color.red()<color.blue()){
+                return true;
+            } else{
+                return false;
+            }
         }
     }
 
@@ -269,7 +289,7 @@ public class NewAutonomous524 extends MecanumOpMode {
 
     public double goToPosition(double setpointx){
         setx=setpointx; //x position
-        final double CIRCUMFERENCE = 0.235; //DO NOT CHANGE
+        final double CIRCUMFERENCE = 0.2135; //DO NOT CHANGE
         tottotx = ((((motor2.getCurrentPosition()-startingEncoderMotor2)))/1426)  * CIRCUMFERENCE;
 
         //should it be <= someNumber instead of ==someNumber? (will the code stop when getRuntime()%interval != 0?)
@@ -292,10 +312,6 @@ public class NewAutonomous524 extends MecanumOpMode {
         }
         telemetry.addData("outX",Math.round(outx*10)/(double)10);
         return Math.round(outx*10)/(double)10;
-    }
-
-    public void turn(double angle){
-
     }
 
     public double dotProduct(double[] vector1, double[] vector2){
