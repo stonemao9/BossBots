@@ -288,7 +288,7 @@ public class NewAutonomous524 extends MecanumOpMode {
     }
 
     public double goToPosition(double setpointx){
-        setx=setpointx; //x position
+        setx=setpointx; //x position that is not changing
         final double CIRCUMFERENCE = 0.2135; //DO NOT CHANGE
         tottotx = ((((motor2.getCurrentPosition()-startingEncoderMotor2)))/1426)  * CIRCUMFERENCE;
 
