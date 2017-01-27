@@ -19,7 +19,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 
 /**
  * Created by Stone Mao & Cooper LaRhette in the 2016-2017 school year
- * for the Campolindo High School robotics team The Boss Bots
+ * for the Campolindo High School robotics team 524, The Boss Bots
  */
 
  /*
@@ -54,7 +54,7 @@ public abstract class MecanumOpMode extends OpMode {
     public double gyroY;
     public double gyroZ;
 
-    public boolean isDone=false;
+    public boolean isDone = false;
 
 
     private boolean slowMode = false;
@@ -172,11 +172,35 @@ public abstract class MecanumOpMode extends OpMode {
         else
             return length = length / 2;
     }
-    public void updateSensor(boolean base){
-            Acceleration a = accSense.getAcceleration();
-            accX = a.xAccel;
-            accY = a.yAccel;
-            accZ = a.zAccel;
-            gyroX = gyroSense.getRotationFraction();
+
+    public double currentHeading = 0;
+
+    /**
+     * Complete turning funtion for autonomous. Still need to find something that will give us
+     * the proper heading of the robot, but once we get that the code should work in theory; it was
+     * tested in IntelliJ.
+     * @param desiredTurnDegree How far the robot should turn based off of current heading, ie if
+     *                          it is at 90 degrees and wants to go to 0, give it -90.
+     * @return the motor power that is scaled based on how far thru the turn we are. May not be neccasary
+     * to return something...
+     */
+    public double getTurnValues(int desiredTurnDegree) {
+        double targetAngle = desiredTurnDegree + currentHeading;
+        double currentAngle = gyroSense.getHeading() - targetAngle;
+        telemetry.addData("turning","T: "+targetAngle+" C: "+currentAngle);
+        double factor = currentAngle / desiredTurnDegree;
+        motor1.setPower(-1 * factor);
+        motor2.setPower(1 * factor);
+        motor3.setPower(1 * factor);
+        motor4.setPower(-1 * factor);
+        return Math.abs(factor);
+    }
+
+    public void updateSensor(boolean base) {
+        Acceleration a = accSense.getAcceleration();
+        accX = a.xAccel;
+        accY = a.yAccel;
+        accZ = a.zAccel;
+        gyroX = gyroSense.getRotationFraction();
     }
 }

@@ -110,10 +110,12 @@ public class NewAutonomous524 extends MecanumOpMode {
 
         //NXT
         accelNXT = hardwareMap.accelerationSensor.get("acc");
-        color=hardwareMap.colorSensor.get("color");
+        gyroSense = hardwareMap.gyroSensor.get("gyro");
+        color = hardwareMap.colorSensor.get("color");
         color.enableLed(false);
         shooter = hardwareMap.dcMotor.get("shooter");
 
+        currentHeading = gyroSense.getHeading();
         ballKeeper = hardwareMap.servo.get("ballKeeper");
         flicker = hardwareMap.servo.get("flicker");
         flicker.setPosition(0.55);
@@ -130,8 +132,8 @@ public class NewAutonomous524 extends MecanumOpMode {
      */
     @Override
     public void init_loop() {
-        telemetry.addData("startingEncoderMotor2",startingEncoderMotor2);
-        telemetry.addData("RGB", color.red()+", "+color.green()+", "+color.blue());
+        telemetry.addData("startingEncoderMotor2", startingEncoderMotor2);
+        telemetry.addData("RGB", color.red() + ", " + color.green() + ", " + color.blue());
     }
 
     /*
@@ -160,120 +162,122 @@ public class NewAutonomous524 extends MecanumOpMode {
     private boolean task11 = false;
     private boolean task12 = false;
     private boolean task13 = false;
-    private double tempTime=0;
+    private double tempTime = 0;
+
     @Override
     public void loop() {
-        telemetry.addData("RGB", color.red()+", "+color.green()+", "+color.blue());
-        if(!task0){
-            if(runtime.milliseconds()<600){
-                driveAngle(Math.PI/2,0.7);
-            } else {
-                driveAngle(Math.PI/2,0);
-                tempTime=runtime.milliseconds();
-                task0=true;
-            }
-            telemetry.addData("Task","Forward");
-        }
-        else if(!task1){
-            if(runtime.milliseconds()<tempTime+600){
-                motor1.setPower(-0.5);
-                motor2.setPower(0.5);
-                motor3.setPower(0.5);
-                motor4.setPower(-0.5);
-            } else {
-                motor1.setPower(0);
-                motor2.setPower(0);
-                motor3.setPower(0);
-                motor4.setPower(0);
-                tempTime=runtime.milliseconds();
-                task1=true;
-            }
-            telemetry.addData("Task","Turning");
-        }
-         else if (!task2)  {
-            totx = tottotx;
-            task2=true;
+        telemetry.addData("RGB", color.red() + ", " + color.green() + ", " + color.blue());
 
-        } else if(!task3){
-            if(goToPosition(1.52)<0.13){
-                task3=true;
-                driveAngle(0,0);
-                tempTime=runtime.milliseconds();
-            }
-            telemetry.addData("totx",totx);
-            telemetry.addData("tottotx",tottotx);
-            telemetry.addData("Task","Moving towards beacon");
-        } else if(!task4){
-            if(runtime.milliseconds()<tempTime+600){
-                motor1.setPower(0.5);
-                motor2.setPower(-0.5);
-                motor3.setPower(-0.5);
-                motor4.setPower(0.5);
-            } else {
-                motor1.setPower(0);
-                motor2.setPower(0);
-                motor3.setPower(0);
-                motor4.setPower(0);
-                tempTime=runtime.milliseconds();
-                task4=true;
-            }
-            telemetry.addData("Task","Turning");
-        } else if(!task5){
-            if(runtime.milliseconds()<tempTime+1100){
-                driveAngle(1*Math.PI/180,0.6);
-            } else {
-                driveAngle(0,0);
-                tempTime=runtime.milliseconds();
-                task5=true;
-            }
-            telemetry.addData("Task","Moving at zero degrees");
-        } else if(!task8){
-            telemetry.addData("color!!!",sameColor(teamColor,color));
-            if(sameColor(teamColor,color)){
-                if(runtime.milliseconds()<tempTime+600){
-                    driveAngle(0,1);
-                } else {
-                    driveAngle(0,0);
-                    task8 = true;
-                    task9 = true;
-                    task10 = true;
-                }
-            } else {
-                telemetry.addData("color123123",false);
-                task8 = true;
-            }
-        } else if(!task9){
-            totx = tottotx;
-            task9=true;
-        } else if(!task10){
-            telemetry.addData("totx",totx);
-            telemetry.addData("Task","Moving away from wrong color");
-            telemetry.addData("tottotx",tottotx);
-            if(goToPosition(-0.3)<0.13){
-                task10=true;
-                driveAngle(0,0);
-                tempTime=runtime.milliseconds();
-            }
-        }
+//        if (!task0) {
+//            if (runtime.milliseconds() < 600) {
+//                driveAngle(Math.PI / 2, 0.7);
+//            } else {
+//                driveAngle(Math.PI / 2, 0);
+//                tempTime = runtime.milliseconds();
+//                task0 = true;
+//            }
+//            telemetry.addData("Task", "Forward");
+//        } else if (!task1) {
+//            if (runtime.milliseconds() < tempTime + 600) {
+//                motor1.setPower(-0.5);
+//                motor2.setPower(0.5);
+//                motor3.setPower(0.5);
+//                motor4.setPower(-0.5);
+//            } else {
+//                motor1.setPower(0);
+//                motor2.setPower(0);
+//                motor3.setPower(0);
+//                motor4.setPower(0);
+//                tempTime = runtime.milliseconds();
+//                task1 = true;
+//            }
+//            telemetry.addData("Task", "Turning");
+//        } else if (!task2) {
+//            totx = tottotx;
+//            task2 = true;
+//
+//        } else if (!task3) {
+//            if (goToPosition(1.52) < 0.13) {
+//                task3 = true;
+//                driveAngle(0, 0);
+//                tempTime = runtime.milliseconds();
+//            }
+//            telemetry.addData("totx", totx);
+//            telemetry.addData("tottotx", tottotx);
+//            telemetry.addData("Task", "Moving towards beacon");
+//        } else if (!task4) {
+//            if (runtime.milliseconds() < tempTime + 600) {
+//                motor1.setPower(0.5);
+//                motor2.setPower(-0.5);
+//                motor3.setPower(-0.5);
+//                motor4.setPower(0.5);
+//            } else {
+//                motor1.setPower(0);
+//                motor2.setPower(0);
+//                motor3.setPower(0);
+//                motor4.setPower(0);
+//                tempTime = runtime.milliseconds();
+//                task4 = true;
+//            }
+//            telemetry.addData("Task", "Turning");
+//        } else if (!task5) {
+//            if (runtime.milliseconds() < tempTime + 1100) {
+//                driveAngle(1 * Math.PI / 180, 0.6);
+//            } else {
+//                driveAngle(0, 0);
+//                tempTime = runtime.milliseconds();
+//                task5 = true;
+//            }
+//            telemetry.addData("Task", "Moving at zero degrees");
+//        } else if (!task8) {
+//            telemetry.addData("color!!!", sameColor(teamColor, color));
+//            if (sameColor(teamColor, color)) {
+//                if (runtime.milliseconds() < tempTime + 600) {
+//                    driveAngle(0, 1);
+//                } else {
+//                    driveAngle(0, 0);
+//                    task8 = true;
+//                    task9 = true;
+//                    task10 = true;
+//                }
+//            } else {
+//                telemetry.addData("color123123", false);
+//                task8 = true;
+//            }
+//        } else if (!task9) {
+//            totx = tottotx;
+//            task9 = true;
+//        } else if (!task10) {
+//            telemetry.addData("totx", totx);
+//            telemetry.addData("Task", "Moving away from wrong color");
+//            telemetry.addData("tottotx", tottotx);
+//            if (goToPosition(-0.3) < 0.13) {
+//                task10 = true;
+//                driveAngle(0, 0);
+//                tempTime = runtime.milliseconds();
+//            }
+//        }
     }
-    private void press(double tempTime){
-        if(runtime.milliseconds()<tempTime+600){
-            driveAngle(0,1);
+
+    private void press(double tempTime) {
+        if (runtime.milliseconds() < tempTime + 600) {
+            driveAngle(0, 1);
         } else {
-            driveAngle(0,0);
+            driveAngle(0, 0);
         }
     }
+
     private boolean sameColor(String teamColor, ColorSensor color) {
-        if(teamColor.equals("r")){
-            if(color.red()>color.blue()){
+        if (teamColor.equals("r")) {
+            if (color.red() > color.blue()) {
                 return true;
-            } else{
+            } else {
                 return false;
             }
         } else {
-            if(color.red()<color.blue()){
+            if (color.red() < color.blue()) {
                 return true;
-            } else{
+            } else {
                 return false;
             }
         }
@@ -287,52 +291,52 @@ public class NewAutonomous524 extends MecanumOpMode {
 
     }
 
-    public double goToPosition(double setpointx){
-        setx=setpointx; //x position that is not changing
+    public double goToPosition(double setpointx) {
+        setx = setpointx; //x position that is not changing
         final double CIRCUMFERENCE = 0.2135; //DO NOT CHANGE
-        tottotx = ((((motor2.getCurrentPosition()-startingEncoderMotor2)))/1426)  * CIRCUMFERENCE;
+        tottotx = ((((motor2.getCurrentPosition() - startingEncoderMotor2))) / 1426) * CIRCUMFERENCE;
 
         //should it be <= someNumber instead of ==someNumber? (will the code stop when getRuntime()%interval != 0?)
         if (runtime.milliseconds() % interval <= 19) {
             curx = tottotx - totx;
 
-            velx = (kd*(curx - lastx))/interval;
+            velx = (kd * (curx - lastx)) / interval;
 
-            outx = (kp*(setx-curx)) - velx;
+            outx = (kp * (setx - curx)) - velx;
 
-            if (outx >= 1){
+            if (outx >= 1) {
                 outx = 1;
             }
 
-            if (outx <= -1){
+            if (outx <= -1) {
                 outx = -1;
             }
             telemetry.addData("outx", outx);
-            driveAngle(Math.PI/2 , outx);
+            driveAngle(Math.PI / 2, outx);
         }
-        telemetry.addData("outX",Math.round(outx*10)/(double)10);
-        return Math.round(outx*10)/(double)10;
+        telemetry.addData("outX", Math.round(outx * 10) / (double) 10);
+        return Math.round(outx * 10) / (double) 10;
     }
 
-    public double dotProduct(double[] vector1, double[] vector2){
-        return (vector1[0]*vector2[0]) + (vector1[1]*vector2[1]) + (vector1[2]*vector2[2]);
+    public double dotProduct(double[] vector1, double[] vector2) {
+        return (vector1[0] * vector2[0]) + (vector1[1] * vector2[1]) + (vector1[2] * vector2[2]);
     }
 
-    public double[] crossProduct(double[] vector1, double[] vector2){
+    public double[] crossProduct(double[] vector1, double[] vector2) {
         double[] cp = new double[3];
 
-        cp[0] = (vector1[1]*vector2[2]) - (vector1[2]*vector2[1]);
-        cp[1] = (vector1[2]*vector2[0]) - (vector1[0]*vector2[2]);
-        cp[2] = (vector1[0]*vector2[1]) - (vector1[1]*vector2[0]);
+        cp[0] = (vector1[1] * vector2[2]) - (vector1[2] * vector2[1]);
+        cp[1] = (vector1[2] * vector2[0]) - (vector1[0] * vector2[2]);
+        cp[2] = (vector1[0] * vector2[1]) - (vector1[1] * vector2[0]);
 
         return cp;
     }
 
-    public double[] unitVector(double[] vector1){
+    public double[] unitVector(double[] vector1) {
         double[] uv = new double[3];
 
-        for (int i = 0; i <=2; i++){
-            uv[i] = vector1[i]/dotProduct(vector1, vector1);
+        for (int i = 0; i <= 2; i++) {
+            uv[i] = vector1[i] / dotProduct(vector1, vector1);
         }
 
         return uv;
