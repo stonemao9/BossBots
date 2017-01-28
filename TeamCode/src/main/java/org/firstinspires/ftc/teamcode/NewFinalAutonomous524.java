@@ -106,7 +106,7 @@ public class NewFinalAutonomous524 extends MecanumOpMode {
         idleGear = hardwareMap.servo.get("idleGear");
         teamColor = "b";
 
-        kp = 0.25;
+        kp = 0.0762;
         kd = 0.0;
 
         //NXT
@@ -200,16 +200,16 @@ public class NewFinalAutonomous524 extends MecanumOpMode {
 //            totx = tottotx;
 //            task2 = true;
 //
-//        } else if (!task3) {
-//            if (goToPosition(1.52) < 0.13) {
-//                task3 = true;
-//                driveAngle(0, 0);
-//                tempTime = runtime.milliseconds();
-//            }
-//            telemetry.addData("totx", totx);
-//            telemetry.addData("tottotx", tottotx);
-//            telemetry.addData("Task", "Moving towards beacon");
-//        } else if (!task4) {
+         if (!task3) {
+            if (goToPosition(1.52) < 0.13) {
+                task3 = true;
+                driveAngle(0, 0);
+                tempTime = runtime.milliseconds();
+            }
+            telemetry.addData("totx", totx);
+            telemetry.addData("tottotx", tottotx);
+            telemetry.addData("Task", "Moving towards beacon");
+        } //else if (!task4) {
 //            if (runtime.milliseconds() < tempTime + 600) {
 //                motor1.setPower(0.5);
 //                motor2.setPower(-0.5);
