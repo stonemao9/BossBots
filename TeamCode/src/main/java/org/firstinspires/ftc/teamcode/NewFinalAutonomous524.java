@@ -48,7 +48,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Team 524 Autonomous", group = "Iterative Opmode")
 // @Autonomous(...) is the other common choice
 @Disabled
-public class NewAutonomous524 extends MecanumOpMode {
+public class NewFinalAutonomous524 extends MecanumOpMode {
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor belt;
@@ -58,8 +58,8 @@ public class NewAutonomous524 extends MecanumOpMode {
 
 
     //Phone sensors
-    private Sensor magnetometer;
-    private Sensor accelerometer;
+    private double curX;
+    private double curY;
 
     private String teamColor;
     private DcMotor shooter;
@@ -72,6 +72,7 @@ public class NewAutonomous524 extends MecanumOpMode {
 
     //PID variables
     private double setx, curx, lastx, tottotx, totx, velx, kp, kd, outx, dx, startingEncoderMotor2, startingEncoderMotor4;
+    private double setDist;
 
     private long interval; //sensor sample period (1/sample frequency)
 
@@ -162,6 +163,9 @@ public class NewAutonomous524 extends MecanumOpMode {
     private boolean task11 = false;
     private boolean task12 = false;
     private boolean task13 = false;
+    private boolean task14 = false;
+    private boolean task15 = false;
+    private boolean task16 = false;
     private double tempTime = 0;
 
     @Override
@@ -293,7 +297,7 @@ public class NewAutonomous524 extends MecanumOpMode {
 
     public double goToPosition(double setpointx) {
         setx = setpointx; //x position that is not changing
-        final double CIRCUMFERENCE = 0.2135; //DO NOT CHANGE
+        final double CIRCUMFERENCE = 0.700459; //DO NOT CHANGE
         tottotx = ((((motor2.getCurrentPosition() - startingEncoderMotor2))) / 1426) * CIRCUMFERENCE;
 
         //should it be <= someNumber instead of ==someNumber? (will the code stop when getRuntime()%interval != 0?)
@@ -320,6 +324,12 @@ public class NewAutonomous524 extends MecanumOpMode {
 
     public double dotProduct(double[] vector1, double[] vector2) {
         return (vector1[0] * vector2[0]) + (vector1[1] * vector2[1]) + (vector1[2] * vector2[2]);
+    }
+
+    public void takeMeTo(double x, double y){
+        double distance = Math.sqrt(Math.pow((curX - x),2) + Math.pow((curY - y),2));
+
+        goToPosition(distance);
     }
 
     public double[] crossProduct(double[] vector1, double[] vector2) {

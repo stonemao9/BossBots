@@ -70,7 +70,7 @@ public class ConceptRegisterOpModes {
         // manager.register("Linear Opmode",          TemplateOpMode_Linear.class);
         manager.register("Team 524 Teleop",           TeleopTeam524.class);
 //        manager.register("LightSensor",               LightSensorTest.class);
-        manager.register("Auto",               NewAutonomous524.class);
+        manager.register("Auto",               NewFinalAutonomous524.class);
         // Driving Samples
         // manager.register("Teleop POV",             PushbotTeleopPOV_Linear.class);
         // manager.register("Teleop Tank",            PushbotTeleopTank_Iterative.class);
