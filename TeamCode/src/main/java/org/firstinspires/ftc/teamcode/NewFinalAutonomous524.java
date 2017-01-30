@@ -48,7 +48,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Team 524 Autonomous", group = "Iterative Opmode")
 // @Autonomous(...) is the other common choice
 @Disabled
-public class NewAutonomous524 extends MecanumOpMode {
+public class NewFinalAutonomous524 extends MecanumOpMode {
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor belt;
