@@ -58,21 +58,19 @@ public class NewFinalAutonomous524 extends MecanumOpMode {
 
 
     //Phone sensors
-    private double curX;
-    private double curY;
+    private Sensor magnetometer;
+    private Sensor accelerometer;
 
     private String teamColor;
     private DcMotor shooter;
-    private AccelerationSensor accelNXT;
-    private GyroSensor gyroNXT;
-    private ColorSensor color;
+    private ColorSensor colorLeft;
+    private ColorSensor colorRight;
     private Servo ballKeeper;
     private Servo flicker;
     private double initAfterRT;
 
     //PID variables
     private double setx, curx, lastx, tottotx, totx, velx, kp, kd, outx, dx, startingEncoderMotor2, startingEncoderMotor4;
-    private double setDist;
 
     private long interval; //sensor sample period (1/sample frequency)
 
@@ -106,17 +104,16 @@ public class NewFinalAutonomous524 extends MecanumOpMode {
         idleGear = hardwareMap.servo.get("idleGear");
         teamColor = "b";
 
-        kp = 0.0762;
+        kp = 1;
         kd = 0.0;
 
         //NXT
-        accelNXT = hardwareMap.accelerationSensor.get("acc");
-        gyroSense = hardwareMap.gyroSensor.get("gyro");
-        color = hardwareMap.colorSensor.get("color");
-        color.enableLed(false);
+        colorLeft = hardwareMap.colorSensor.get("color");
+        colorLeft.enableLed(false);
+        colorRight = hardwareMap.colorSensor.get("color1");
+        colorRight.enableLed(false);
         shooter = hardwareMap.dcMotor.get("shooter");
 
-        currentHeading = gyroSense.getHeading();
         ballKeeper = hardwareMap.servo.get("ballKeeper");
         flicker = hardwareMap.servo.get("flicker");
         flicker.setPosition(0.55);
@@ -134,7 +131,7 @@ public class NewFinalAutonomous524 extends MecanumOpMode {
     @Override
     public void init_loop() {
         telemetry.addData("startingEncoderMotor2", startingEncoderMotor2);
-        telemetry.addData("RGB", color.red() + ", " + color.green() + ", " + color.blue());
+        telemetry.addData("RGB-Left", colorLeft.red() + ", " + colorLeft.green() + ", " + colorLeft.blue());
     }
 
     /*
@@ -163,26 +160,35 @@ public class NewFinalAutonomous524 extends MecanumOpMode {
     private boolean task11 = false;
     private boolean task12 = false;
     private boolean task13 = false;
-    private boolean task14 = false;
-    private boolean task15 = false;
-    private boolean task16 = false;
     private double tempTime = 0;
 
     @Override
     public void loop() {
-        telemetry.addData("RGB", color.red() + ", " + color.green() + ", " + color.blue());
-
-//        if (!task0) {
-//            if (runtime.milliseconds() < 600) {
-//                driveAngle(Math.PI / 2, 0.7);
+        if (!task2) {
+            totx = tottotx;
+            task2 = true;
+        } else if (!task3) {
+            if (goToPosition(2) < 0.13) {
+                task3 = true;
+                driveAngle(0, 0);
+                tempTime = runtime.milliseconds();
+            }
+            telemetry.addData("totx", totx);
+            telemetry.addData("tottotx", tottotx);
+            telemetry.addData("Task", "Moving towards beacon");
+        }
+//        if(!task0){
+//            if(runtime.milliseconds()<600){
+//                driveAngle(Math.PI/2,0.7);
 //            } else {
-//                driveAngle(Math.PI / 2, 0);
-//                tempTime = runtime.milliseconds();
-//                task0 = true;
+//                driveAngle(Math.PI/2,0);
+//                tempTime=runtime.milliseconds();
+//                task0=true;
 //            }
-//            telemetry.addData("Task", "Forward");
-//        } else if (!task1) {
-//            if (runtime.milliseconds() < tempTime + 600) {
+//            telemetry.addData("Task","Forward");
+//        }
+//        else if(!task1){
+//            if(runtime.milliseconds()<tempTime+600){
 //                motor1.setPower(-0.5);
 //                motor2.setPower(0.5);
 //                motor3.setPower(0.5);
@@ -192,25 +198,26 @@ public class NewFinalAutonomous524 extends MecanumOpMode {
 //                motor2.setPower(0);
 //                motor3.setPower(0);
 //                motor4.setPower(0);
-//                tempTime = runtime.milliseconds();
-//                task1 = true;
+//                tempTime=runtime.milliseconds();
+//                task1=true;
 //            }
-//            telemetry.addData("Task", "Turning");
-//        } else if (!task2) {
+//            telemetry.addData("Task","Turning");
+//        }
+//         else if (!task2)  {
 //            totx = tottotx;
-//            task2 = true;
+//            task2=true;
 //
-         if (!task3) {
-            if (goToPosition(1.52) < 0.13) {
-                task3 = true;
-                driveAngle(0, 0);
-                tempTime = runtime.milliseconds();
-            }
-            telemetry.addData("totx", totx);
-            telemetry.addData("tottotx", tottotx);
-            telemetry.addData("Task", "Moving towards beacon");
-        } //else if (!task4) {
-//            if (runtime.milliseconds() < tempTime + 600) {
+//        } else if(!task3){
+//            if(goToPosition(1.52)<0.13){
+//                task3=true;
+//                driveAngle(0,0);
+//                tempTime=runtime.milliseconds();
+//            }
+//            telemetry.addData("totx",totx);
+//            telemetry.addData("tottotx",tottotx);
+//            telemetry.addData("Task","Moving towards beacon");
+//        } else if(!task4){
+//            if(runtime.milliseconds()<tempTime+600){
 //                motor1.setPower(0.5);
 //                motor2.setPower(-0.5);
 //                motor3.setPower(-0.5);
@@ -220,45 +227,45 @@ public class NewFinalAutonomous524 extends MecanumOpMode {
 //                motor2.setPower(0);
 //                motor3.setPower(0);
 //                motor4.setPower(0);
-//                tempTime = runtime.milliseconds();
-//                task4 = true;
+//                tempTime=runtime.milliseconds();
+//                task4=true;
 //            }
-//            telemetry.addData("Task", "Turning");
-//        } else if (!task5) {
-//            if (runtime.milliseconds() < tempTime + 1100) {
-//                driveAngle(1 * Math.PI / 180, 0.6);
+//            telemetry.addData("Task","Turning");
+//        } else if(!task5){
+//            if(runtime.milliseconds()<tempTime+1100){
+//                driveAngle(1*Math.PI/180,0.6);
 //            } else {
-//                driveAngle(0, 0);
-//                tempTime = runtime.milliseconds();
-//                task5 = true;
+//                driveAngle(0,0);
+//                tempTime=runtime.milliseconds();
+//                task5=true;
 //            }
-//            telemetry.addData("Task", "Moving at zero degrees");
-//        } else if (!task8) {
-//            telemetry.addData("color!!!", sameColor(teamColor, color));
-//            if (sameColor(teamColor, color)) {
-//                if (runtime.milliseconds() < tempTime + 600) {
-//                    driveAngle(0, 1);
+//            telemetry.addData("Task","Moving at zero degrees");
+//        } else if(!task8){
+//            telemetry.addData("color!!!",sameColor(teamColor,color));
+//            if(sameColor(teamColor,color)){
+//                if(runtime.milliseconds()<tempTime+600){
+//                    driveAngle(0,1);
 //                } else {
-//                    driveAngle(0, 0);
+//                    driveAngle(0,0);
 //                    task8 = true;
 //                    task9 = true;
 //                    task10 = true;
 //                }
 //            } else {
-//                telemetry.addData("color123123", false);
+//                telemetry.addData("color123123",false);
 //                task8 = true;
 //            }
-//        } else if (!task9) {
+//        } else if(!task9){
 //            totx = tottotx;
-//            task9 = true;
-//        } else if (!task10) {
-//            telemetry.addData("totx", totx);
-//            telemetry.addData("Task", "Moving away from wrong color");
-//            telemetry.addData("tottotx", tottotx);
-//            if (goToPosition(-0.3) < 0.13) {
-//                task10 = true;
-//                driveAngle(0, 0);
-//                tempTime = runtime.milliseconds();
+//            task9=true;
+//        } else if(!task10){
+//            telemetry.addData("totx",totx);
+//            telemetry.addData("Task","Moving away from wrong color");
+//            telemetry.addData("tottotx",tottotx);
+//            if(goToPosition(-0.3)<0.13){
+//                task10=true;
+//                driveAngle(0,0);
+//                tempTime=runtime.milliseconds();
 //            }
 //        }
     }
@@ -297,7 +304,7 @@ public class NewFinalAutonomous524 extends MecanumOpMode {
 
     public double goToPosition(double setpointx) {
         setx = setpointx; //x position that is not changing
-        final double CIRCUMFERENCE = 0.700459; //DO NOT CHANGE
+        final double CIRCUMFERENCE = 0.618422514; //DO NOT CHANGE
         tottotx = ((((motor2.getCurrentPosition() - startingEncoderMotor2))) / 1426) * CIRCUMFERENCE;
 
         //should it be <= someNumber instead of ==someNumber? (will the code stop when getRuntime()%interval != 0?)
@@ -326,15 +333,8 @@ public class NewFinalAutonomous524 extends MecanumOpMode {
         return (vector1[0] * vector2[0]) + (vector1[1] * vector2[1]) + (vector1[2] * vector2[2]);
     }
 
-    public void takeMeTo(double x, double y){
-        double distance = Math.sqrt(Math.pow((curX - x),2) + Math.pow((curY - y),2));
-
-        goToPosition(distance);
-    }
-
     public double[] crossProduct(double[] vector1, double[] vector2) {
         double[] cp = new double[3];
-
         cp[0] = (vector1[1] * vector2[2]) - (vector1[2] * vector2[1]);
         cp[1] = (vector1[2] * vector2[0]) - (vector1[0] * vector2[2]);
         cp[2] = (vector1[0] * vector2[1]) - (vector1[1] * vector2[0]);
@@ -348,7 +348,20 @@ public class NewFinalAutonomous524 extends MecanumOpMode {
         for (int i = 0; i <= 2; i++) {
             uv[i] = vector1[i] / dotProduct(vector1, vector1);
         }
-
         return uv;
+    }
+
+    public void detectColor() {
+        telemetry.addData("RGB-Left", colorLeft.red() + ", " + colorLeft.green() + ", " + colorLeft.blue());
+        telemetry.addData("RGB-Right", colorRight.red() + ", " + colorRight.green() + ", " + colorRight.blue());
+        telemetry.addData("Color Sense", color(colorLeft) + " " + color(colorRight));
+        if (!color(colorLeft) && color(colorRight)) {
+
+        }
+    }
+
+    //True-Red, False-Blue
+    public boolean color(ColorSensor c) {
+        return c.red() > c.blue();
     }
 }
