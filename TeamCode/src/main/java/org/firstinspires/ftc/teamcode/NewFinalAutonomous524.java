@@ -160,6 +160,9 @@ public class NewFinalAutonomous524 extends MecanumOpMode {
     private boolean task11 = false;
     private boolean task12 = false;
     private boolean task13 = false;
+    private boolean task14 = false;
+    private boolean task15 = false;
+    private boolean task16 = false;
     private double tempTime = 0;
 
     @Override
@@ -302,6 +305,7 @@ public class NewFinalAutonomous524 extends MecanumOpMode {
 
     }
 
+    //takes in setpoint, takes robot forward, returns motor power
     public double goToPosition(double setpointx) {
         setx = setpointx; //x position that is not changing
         final double CIRCUMFERENCE = 0.618422514; //DO NOT CHANGE
@@ -327,6 +331,36 @@ public class NewFinalAutonomous524 extends MecanumOpMode {
         }
         telemetry.addData("outX", Math.round(outx * 10) / (double) 10);
         return Math.round(outx * 10) / (double) 10;
+    }
+
+    double lastAng;
+
+    //turn the robot by angle in RADIANS
+    public void turnByAngle(double angle){
+        double curang = 0;
+        double setAngle = angle;
+        double errAngle = angle - curang;
+        double changInAngle = ; //get it from ARDUINO
+
+        double kpAngle = ;
+        double kdAngle = ;
+
+        double velAngle = (kdAngle * (curang - lastAng)) / interval;;
+        double outAngle = (kpAngle*errAngle) - velAngle;
+
+        if (outAngle >= 1){
+            outAngle = 1;
+        }
+
+        if (outAngle <= -1){
+            outAngle = -1;
+        }
+
+        lastAng = curang;
+
+        telemetry.addData("Current Angle", curang);
+        telemetry.addData("Error in Angle", errAngle);
+        telemetry.addData("Motor Output", outAngle);
     }
 
     public double dotProduct(double[] vector1, double[] vector2) {
