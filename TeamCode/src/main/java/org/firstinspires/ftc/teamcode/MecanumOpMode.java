@@ -56,6 +56,7 @@ public abstract class MecanumOpMode extends OpMode {
 
     public boolean isDone = false;
 
+    public double angleZ;
 
     private boolean slowMode = false;
     //    final double CHANGE = 0.09; //rate of change, used in accl
