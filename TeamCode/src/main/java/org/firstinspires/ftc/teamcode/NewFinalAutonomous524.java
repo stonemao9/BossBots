@@ -338,12 +338,11 @@ public class NewFinalAutonomous524 extends MecanumOpMode {
     //turn the robot by angle in RADIANS
     public void turnByAngle(double angle){
         double curang = 0;
-        double setAngle = angle;
         double errAngle = angle - curang;
-        double changInAngle = ; //get it from ARDUINO
+        double changInAngle = ; //get it from the AdaFruit IMU
 
-        double kpAngle = ;
-        double kdAngle = ;
+        double kpAngle = 0.01;
+        double kdAngle = 0.0;
 
         double velAngle = (kdAngle * (curang - lastAng)) / interval;;
         double outAngle = (kpAngle*errAngle) - velAngle;
