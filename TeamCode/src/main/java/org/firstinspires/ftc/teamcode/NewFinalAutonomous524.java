@@ -336,15 +336,16 @@ public class NewFinalAutonomous524 extends MecanumOpMode {
     double lastAng;
 
     //turn the robot by angle in RADIANS
-    public void turnByAngle(double angle){
+    public void turnByAngle(double setAngle){
         double curang = 0;
-        double errAngle = angle - curang;
-        double changInAngle = ; //get it from the AdaFruit IMU
+        double errAngle = setAngle - curang;
+        double changInAngle = angleZ; //get it from the Modern Robotics Gyro (given up on AdaFruit)
+        curang += changInAngle;
 
         double kpAngle = 0.01;
         double kdAngle = 0.0;
 
-        double velAngle = (kdAngle * (curang - lastAng)) / interval;;
+        double velAngle = (kdAngle * (curang - lastAng)) / interval;
         double outAngle = (kpAngle*errAngle) - velAngle;
 
         if (outAngle >= 1){
@@ -395,6 +396,7 @@ public class NewFinalAutonomous524 extends MecanumOpMode {
 
     //True-Red, False-Blue
     public boolean color(ColorSensor c) {
+
         return c.red() > c.blue();
     }
 }
