@@ -337,10 +337,10 @@ public class NewFinalAutonomous524 extends MecanumOpMode {
 
     //turn the robot by angle in RADIANS
     public void turnByAngle(double setAngle){
-        double curang = 0;
+        double curang = angleZ;
         double errAngle = setAngle - curang;
-        double changInAngle = angleZ; //get it from the Modern Robotics Gyro (given up on AdaFruit)
-        curang += changInAngle;
+//        double changInAngle = angleZ; //get it from the Modern Robotics Gyro (given up on AdaFruit)
+//        curang += changInAngle;
 
         double kpAngle = 0.01;
         double kdAngle = 0.0;
@@ -361,6 +361,7 @@ public class NewFinalAutonomous524 extends MecanumOpMode {
         telemetry.addData("Current Angle", curang);
         telemetry.addData("Error in Angle", errAngle);
         telemetry.addData("Motor Output", outAngle);
+        telemetry.addData("angleZ", angleZ);
     }
 
     public double dotProduct(double[] vector1, double[] vector2) {
