@@ -8,14 +8,17 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 
 public abstract class AutoMecanumOpMode extends MecanumOpMode {
     public ColorSensor color1;
+
     private boolean pressedBeacon = false;
     private int numTimes=0;
+
     public void detectColor() throws InterruptedException {
-        numTimes++;
+        numTimes++; // Calculate number of times this method has been called
         telemetry.addData("RGB-Left", color1.red() + ", " + color1.green() + ", " + color1.blue());
         telemetry.addData("Color Sense", color() + " NumTimes: "+numTimes);
-        Thread.sleep(500);
+        Thread.sleep(500); // Wait for 500 millisecond to detect color
         telemetry.addData("Color Sense", color() + " NumTimes: AFTER 500 MILLI"+numTimes);
+        // Checks if pressed beacon and right color
         if (color() && !pressedBeacon) {
             driveAngle(0,1);
             Thread.sleep(200);
@@ -24,7 +27,7 @@ public abstract class AutoMecanumOpMode extends MecanumOpMode {
         }
     }
 
-    //True-Red, False-Blue
+    //Returns True-Red, False-Blue
     public boolean color() {
         return color1.red() > color1.blue();
     }

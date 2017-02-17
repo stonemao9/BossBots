@@ -71,6 +71,7 @@ public class ConceptRegisterOpModes {
         manager.register("Team 524 Teleop",           TeleopTeam524.class);
         manager.register("LightSensor",               LightSensorTest.class);
         manager.register("Everything",                EverythingTest.class);
+        manager.register("ColorSensorTest",           ColorSensorTest.class);
         // Driving Samples
         // manager.register("Teleop POV",             PushbotTeleopPOV_Linear.class);
         // manager.register("Teleop Tank",            PushbotTeleopTank_Iterative.class);
