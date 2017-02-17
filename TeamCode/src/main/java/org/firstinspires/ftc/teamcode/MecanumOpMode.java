@@ -187,9 +187,9 @@ public abstract class MecanumOpMode extends OpMode {
      */
     public double getTurnValues(int desiredTurnDegree) {
         double targetAngle = desiredTurnDegree + currentHeading;
-        double currentAngle = gyroSense.getHeading() - targetAngle;
-        telemetry.addData("turning","T: "+targetAngle+" C: "+currentAngle);
-        double factor = currentAngle / desiredTurnDegree;
+        double errorAngle = gyroSense.getHeading() - targetAngle;
+        telemetry.addData("turning","T: "+targetAngle+" C: "+errorAngle);
+        double factor = errorAngle / desiredTurnDegree;
         motor1.setPower(-1 * factor);
         motor2.setPower(1 * factor);
         motor3.setPower(1 * factor);

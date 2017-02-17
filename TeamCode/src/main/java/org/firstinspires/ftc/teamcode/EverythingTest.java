@@ -32,10 +32,13 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.adafruit.AdafruitBNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
@@ -61,6 +64,9 @@ public class EverythingTest extends OpMode
     DcMotor motor1;
     DcMotor motor2;
     DcMotor motor3;
+    ColorSensor color;
+    ColorSensor color1;
+    AdafruitBNO055IMU gyro;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -72,6 +78,9 @@ public class EverythingTest extends OpMode
         motor4 = hardwareMap.dcMotor.get("motor4");
         motor2 = hardwareMap.dcMotor.get("motor2");
         motor3 = hardwareMap.dcMotor.get("motor3");
+        color = hardwareMap.colorSensor.get("color");
+        color.enableLed(false);
+
     }
 
     /*
@@ -95,6 +104,8 @@ public class EverythingTest extends OpMode
     @Override
     public void loop() {
         telemetry.addData("Status", "Running: " + runtime.toString());
+        telemetry.addData("color red",color.red());
+        telemetry.addData("color1 red",color1.red());
         if(gamepad1.a){
            motor1.setPower(1);
         } else {

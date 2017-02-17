@@ -104,8 +104,8 @@ public class NewFinalAutonomous524 extends MecanumOpMode {
         idleGear = hardwareMap.servo.get("idleGear");
         teamColor = "b";
 
-        kp = 1;
-        kd = 0.0;
+        kp = 0.23;
+        kd = 0.02;
 
         //NXT
         colorLeft = hardwareMap.colorSensor.get("color");
@@ -171,7 +171,7 @@ public class NewFinalAutonomous524 extends MecanumOpMode {
             totx = tottotx;
             task2 = true;
         } else if (!task3) {
-            if (goToPosition(2) < 0.13) {
+            if (goToPosition(2) ==0) {
                 task3 = true;
                 driveAngle(0, 0);
                 tempTime = runtime.milliseconds();
@@ -180,6 +180,7 @@ public class NewFinalAutonomous524 extends MecanumOpMode {
             telemetry.addData("tottotx", tottotx);
             telemetry.addData("Task", "Moving towards beacon");
         }
+        telemetry.addData("task3",task3);
 //        if(!task0){
 //            if(runtime.milliseconds()<600){
 //                driveAngle(Math.PI/2,0.7);
@@ -308,7 +309,7 @@ public class NewFinalAutonomous524 extends MecanumOpMode {
     //takes in setpoint, takes robot forward, returns motor power
     public double goToPosition(double setpointx) {
         setx = setpointx; //x position that is not changing
-        final double CIRCUMFERENCE = 0.618422514; //DO NOT CHANGE
+        final double CIRCUMFERENCE = 0.618422514*2; //DO NOT CHANGE
         tottotx = ((((motor2.getCurrentPosition() - startingEncoderMotor2))) / 1426) * CIRCUMFERENCE;
 
         //should it be <= someNumber instead of ==someNumber? (will the code stop when getRuntime()%interval != 0?)
