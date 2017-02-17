@@ -33,22 +33,19 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.firstinspires.ftc.teamcode;
 
 import android.hardware.Sensor;
-import android.hardware.SensorEvent;
 import android.hardware.SensorManager;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.hardware.AccelerationSensor;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Team 524 Autonomous", group = "Iterative Opmode")
 // @Autonomous(...) is the other common choice
 @Disabled
-public class NewFinalAutonomous524 extends MecanumOpMode {
+public class FinalAutoRight extends MecanumOpMode {
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor belt;
@@ -337,10 +334,10 @@ public class NewFinalAutonomous524 extends MecanumOpMode {
 
     //turn the robot by angle in RADIANS
     public void turnByAngle(double setAngle){
-        double curang = angleZ;
+        double curang = 0;
         double errAngle = setAngle - curang;
-//        double changInAngle = angleZ; //get it from the Modern Robotics Gyro (given up on AdaFruit)
-//        curang += changInAngle;
+        double changInAngle = angleZ; //get it from the Modern Robotics Gyro (given up on AdaFruit)
+        curang += changInAngle;
 
         double kpAngle = 0.01;
         double kdAngle = 0.0;
@@ -361,7 +358,6 @@ public class NewFinalAutonomous524 extends MecanumOpMode {
         telemetry.addData("Current Angle", curang);
         telemetry.addData("Error in Angle", errAngle);
         telemetry.addData("Motor Output", outAngle);
-        telemetry.addData("angleZ", angleZ);
     }
 
     public double dotProduct(double[] vector1, double[] vector2) {
