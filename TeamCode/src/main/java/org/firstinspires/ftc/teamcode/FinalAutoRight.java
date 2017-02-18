@@ -42,6 +42,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import static java.lang.Boolean.TRUE;
+
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Team 524 Autonomous", group = "Iterative Opmode")
 // @Autonomous(...) is the other common choice
 @Disabled
@@ -103,8 +105,8 @@ public class FinalAutoRight extends AutoMecanumOpMode {
         compass = hardwareMap.compassSensor.get("compass");
 
 
-        kp = 1;
-        kd = 0.0;
+        kp = 0.23;
+        kd = 0.02;
 
         //NXT
         colorLeft = hardwareMap.colorSensor.get("color");
@@ -162,22 +164,27 @@ public class FinalAutoRight extends AutoMecanumOpMode {
     private boolean task14 = false;
     private boolean task15 = false;
     private boolean task16 = false;
+    private double test2;
     private double tempTime = 0;
 
     @Override
     public void loop() {
-        if (!task2) {
-            totx = tottotx;
-            task2 = true;
-        } else if (!task3) {
-            if (goToPosition(2) < 0.13) {
-                task3 = true;
-                driveAngle(0, 0);
-                tempTime = runtime.milliseconds();
+        if(!task1){
+            currentAngle = compass.getDirection();
+            compassReadingInitial = compass.getDirection();
+            task1=true;
+        }
+        else if (!task2 ) {
+            try {
+                test2 = turnByAngle(90);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-            telemetry.addData("totx", totx);
-            telemetry.addData("tottotx", tottotx);
-            telemetry.addData("Task", "Moving towards beacon");
+
+            if (test2 == 0){
+                task2 = TRUE;
+                driveAngle(0,0);
+            }
         }
 //        if(!task0){
 //            if(runtime.milliseconds()<600){

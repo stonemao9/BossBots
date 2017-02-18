@@ -10,7 +10,7 @@ import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cCompassSensor;
 import com.qualcomm.robotcore.hardware.CompassSensor;
 
 /**
- * Created by chscompsci on 2/17/2017.
+ *Created by chscompsci on 2/17/2017.
  */
 
 public abstract class AutoMecanumOpMode extends MecanumOpMode {
@@ -98,11 +98,12 @@ public abstract class AutoMecanumOpMode extends MecanumOpMode {
 
     double lastAng;
 
-    //turn the robot by angle in RADIANS
-    public void turnByAngle(double setAngle) throws InterruptedException {
+    //turn the robot by angle in DEGREES
+    public double turnByAngle(double setAngle) throws InterruptedException {
         currentAngle();
+        final double setpoint = currentAngularPosition + setAngle;;
         double curang = currentAngularPosition;
-        double errAngle = setAngle - curang;
+        double errAngle = setpoint - curang;
 //        double changInAngle = angleZ; //get it from the Modern Robotics Gyro (given up on AdaFruit)
 //        curang += changInAngle;
 
@@ -120,16 +121,23 @@ public abstract class AutoMecanumOpMode extends MecanumOpMode {
             outAngle = -1;
         }
 
+        motor1.setPower(outAngle);
+        motor2.setPower(-1 * outAngle);
+        motor3.setPower(-1 * outAngle);
+        motor4.setPower(outAngle);
+
         lastAng = curang;
 
         telemetry.addData("Current Angle", curang);
         telemetry.addData("Error in Angle", errAngle);
         telemetry.addData("Motor Output", outAngle);
         telemetry.addData("Current Direction", currentAngularPosition);
+
+        return Math.round(outx * 10) / (double) 10;
     }
 
-    private double compassReadingInitial = compass.getDirection();
-    public double currentAngle = compass.getDirection();
+    public double compassReadingInitial;
+    public double currentAngle;
     public int n = 0; //counts how many times compass.getdirection() has reset
     public double currentAngularPosition;
 
