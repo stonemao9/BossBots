@@ -9,6 +9,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cCompassSensor;
 import com.qualcomm.robotcore.hardware.CompassSensor;
 
+import static java.lang.Double.NaN;
+
 /**
  *Created by chscompsci on 2/17/2017.
  */
@@ -109,7 +111,7 @@ public abstract class AutoMecanumOpMode extends MecanumOpMode {
         if(setOnce){
             currentAngle();
             setpoint = currentAngularPosition + setAngle;
-            setOnce=false;
+            setOnce = false;
         }
         double curang = currentAngularPosition;
         telemetry.addData("setpoint",setpoint);
@@ -130,6 +132,10 @@ public abstract class AutoMecanumOpMode extends MecanumOpMode {
 
         if (outAngle <= -1){
             outAngle = -1;
+        }
+
+        if (outAngle == NaN){
+            outAngle = 0;
         }
 
         motor1.setPower(outAngle);
