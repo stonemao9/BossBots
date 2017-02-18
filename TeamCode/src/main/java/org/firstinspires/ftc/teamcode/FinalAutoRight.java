@@ -170,8 +170,9 @@ public class FinalAutoRight extends AutoMecanumOpMode {
     @Override
     public void loop() {
         if(!task1){
-            currentAngle = compass.getDirection();
+            ppcurrentAngle = compass.getDirection();
             compassReadingInitial = compass.getDirection();
+
             task1=true;
         }
         else if (!task2 ) {

@@ -98,11 +98,22 @@ public abstract class AutoMecanumOpMode extends MecanumOpMode {
 
     double lastAng;
 
+    public double compassReadingInitial;
+    public double ppcurrentAngle;
+    public int n = 0; //counts how many times compass.getdirection() has reset
+    public double currentAngularPosition;
+    public double setpoint;
+    public boolean setOnce=true;
     //turn the robot by angle in DEGREES
     public double turnByAngle(double setAngle) throws InterruptedException {
-        currentAngle();
-        final double setpoint = currentAngularPosition + setAngle;;
+        if(setOnce){
+            currentAngle();
+            setpoint = currentAngularPosition + setAngle;
+            setOnce=false;
+        }
         double curang = currentAngularPosition;
+        telemetry.addData("setpoint",setpoint);
+        telemetry.addData("curang",curang);
         double errAngle = setpoint - curang;
 //        double changInAngle = angleZ; //get it from the Modern Robotics Gyro (given up on AdaFruit)
 //        curang += changInAngle;
@@ -136,25 +147,20 @@ public abstract class AutoMecanumOpMode extends MecanumOpMode {
         return Math.round(outx * 10) / (double) 10;
     }
 
-    public double compassReadingInitial;
-    public double currentAngle;
-    public int n = 0; //counts how many times compass.getdirection() has reset
-    public double currentAngularPosition;
-
     public void currentAngle() throws InterruptedException {
         double compassReadingCurrent = compass.getDirection();
         double changeInAngle = compassReadingCurrent - compassReadingInitial;
 
-        currentAngle += changeInAngle;
+        ppcurrentAngle += changeInAngle;
 
-        if (currentAngle > 320){
-            currentAngle = 360 - currentAngle;
+        if (ppcurrentAngle > 320){
+            ppcurrentAngle = 360 - ppcurrentAngle;
             n++;
         }
 
         compassReadingInitial = compassReadingCurrent;
 
-        currentAngularPosition = (n * 360) + currentAngle;
+        currentAngularPosition = (n * 360) + ppcurrentAngle;
         Thread.sleep(interval);
     }
 
