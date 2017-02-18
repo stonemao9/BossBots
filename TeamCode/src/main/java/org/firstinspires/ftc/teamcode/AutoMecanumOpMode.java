@@ -21,6 +21,7 @@ public abstract class AutoMecanumOpMode extends MecanumOpMode {
         // Checks if pressed beacon and right color
         if (color() && !pressedBeacon) {
             driveAngle(0,1);
+           // driveAngle(Math.PI/2, 1);
             Thread.sleep(200);
             driveAngle(0,0);
             pressedBeacon=true;
