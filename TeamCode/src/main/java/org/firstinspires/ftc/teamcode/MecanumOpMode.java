@@ -56,8 +56,6 @@ public abstract class MecanumOpMode extends OpMode {
 
     public boolean isDone = false;
 
-    public double angleZ;
-
     private boolean slowMode = false;
     //    final double CHANGE = 0.09; //rate of change, used in accl
 //    double limitedLength = 0; // Power truncation/factor, used in accl
@@ -212,3 +210,4 @@ public abstract class MecanumOpMode extends OpMode {
         gyroX = gyroSense.getRotationFraction();
     }
 }
+
