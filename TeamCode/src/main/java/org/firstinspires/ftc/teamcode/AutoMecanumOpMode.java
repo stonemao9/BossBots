@@ -116,6 +116,9 @@ public abstract class AutoMecanumOpMode extends MecanumOpMode {
             cw=-1;
         }
         if(!pressedBeacon){
+            driveAngle(Math.PI/2,1);
+            Thread.sleep(200);
+            Thread.sleep(200);
             hardcodeTurning(cw);
             Thread.sleep(300);
             driveAngle(0, 0);
