@@ -197,6 +197,13 @@ public abstract class MecanumOpMode extends OpMode {
         return Math.abs(factor);
     }
 
+    public void hardcodeTurning(int cw){
+        motor1.setPower(0.5*cw);
+        motor4.setPower(0.5*cw);
+        motor2.setPower(-0.5*cw);
+        motor3.setPower(-0.5*cw);
+    }
+
     public void updateSensor(boolean base) {
         Acceleration a = accSense.getAcceleration();
         accX = a.xAccel;

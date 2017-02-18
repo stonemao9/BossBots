@@ -42,14 +42,13 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @Disabled
 public class ColorSensorTest extends AutoMecanumOpMode
 {
-    /* Declare OpMode members. */
-    private ElapsedTime runtime = new ElapsedTime();
     /*
      * Code to run ONCE when the driver hits INIT
      */
+
     @Override
     public void init() {
-        telemetry.addData("Status", "Initialized");
+        runtime = new ElapsedTime();
         motor1 = hardwareMap.dcMotor.get("motor1");
         motor1.setDirection(DcMotorSimple.Direction.REVERSE);
         motor2 = hardwareMap.dcMotor.get("motor2");
@@ -57,7 +56,10 @@ public class ColorSensorTest extends AutoMecanumOpMode
         motor4 = hardwareMap.dcMotor.get("motor4");
         motor4.setDirection(DcMotorSimple.Direction.REVERSE);
         color1 = hardwareMap.colorSensor.get("color");
+        teamColor=false; //Team Blue
+        telemetry.addData("Status", "Initialized");
     }
+
 
     /*
      * Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
