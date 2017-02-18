@@ -46,6 +46,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cCompassSensor;
+import com.qualcomm.robotcore.hardware.CompassSensor;
 
 
 @TeleOp(name = "Team 524 Teleop", group = "Iterative Opmode")
@@ -63,6 +65,7 @@ public class TeleopTeam524 extends MecanumOpMode {
     private Servo etKeeper;
     private Servo idleGear;
     private Boolean idle = false;
+    private CompassSensor compass;
 
     /*
     *   Motor position
@@ -101,6 +104,7 @@ public class TeleopTeam524 extends MecanumOpMode {
         flicker = hardwareMap.servo.get("flicker");
         etKeeper = hardwareMap.servo.get("liftKeep");
         idleGear = hardwareMap.servo.get("idleGear");
+        compass = hardwareMap.compassSensor.get("compass");
 
         teamColor = "r";
 
@@ -171,6 +175,8 @@ public class TeleopTeam524 extends MecanumOpMode {
         //Servo for releasing the eighty-twenty
         if (gamepad2.y)
             etKeeper.setPosition(1);
+
+        telemetry.addData("current heading",compass.getDirection());
     }
 
     /*

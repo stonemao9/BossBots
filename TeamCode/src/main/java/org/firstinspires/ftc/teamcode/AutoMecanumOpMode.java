@@ -1,6 +1,13 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.hardware.Sensor;
+
 import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cCompassSensor;
+import com.qualcomm.robotcore.hardware.CompassSensor;
 
 /**
  * Created by chscompsci on 2/17/2017.
@@ -8,6 +15,33 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 
 public abstract class AutoMecanumOpMode extends MecanumOpMode {
     public ColorSensor color1;
+
+    /* Declare OpMode members. */
+    public ElapsedTime runtime = new ElapsedTime();
+    public DcMotor belt;
+    public DcMotor eightyTwenty;
+    public DcMotor sweeper;
+    public Servo idleGear;
+
+
+    //Phone sensors
+    public Sensor magnetometer;
+    public Sensor accelerometer;
+
+    public String teamColor;
+    public DcMotor shooter;
+    public ColorSensor colorLeft;
+    public ColorSensor colorRight;
+    public Servo ballKeeper;
+    public Servo flicker;
+    public double initAfterRT;
+    public CompassSensor compass;
+
+
+    //PID variables
+    private double setx, curx, lastx, tottotx, totx, velx, kp, kd, outx, dx, startingEncoderMotor2, startingEncoderMotor4;
+
+    private long interval; //sensor sample period (1/sample frequency)
 
     private boolean pressedBeacon = false;
     private int numTimes=0;
@@ -31,5 +65,88 @@ public abstract class AutoMecanumOpMode extends MecanumOpMode {
     //Returns True-Red, False-Blue
     public boolean color() {
         return color1.red() > color1.blue();
+
     }
+
+    //takes in setpoint, takes robot forward, returns motor power
+    public double goToPosition(double setpointx) {
+        setx = setpointx; //x position that is not changing
+        final double CIRCUMFERENCE = 0.618422514*2; //DO NOT CHANGE
+        tottotx = ((((motor2.getCurrentPosition() - startingEncoderMotor2))) / 1426) * CIRCUMFERENCE;
+
+        //should it be <= someNumber instead of ==someNumber? (will the code stop when getRuntime()%interval != 0?)
+        if (runtime.milliseconds() % interval <= 19) {
+            curx = tottotx - totx;
+
+            velx = (kd * (curx - lastx)) / interval;
+
+            outx = (kp * (setx - curx)) - velx;
+
+            if (outx >= 1) {
+                outx = 1;
+            }
+
+            if (outx <= -1) {
+                outx = -1;
+            }
+            telemetry.addData("outx", outx);
+            driveAngle(Math.PI / 2, outx);
+        }
+        telemetry.addData("outX", Math.round(outx * 10) / (double) 10);
+        return Math.round(outx * 10) / (double) 10;
+    }
+
+    double lastAng;
+
+    //turn the robot by angle in RADIANS
+    public void turnByAngle(double setAngle){
+        double curang = compass.getDirection();
+        double errAngle = setAngle - curang;
+//        double changInAngle = angleZ; //get it from the Modern Robotics Gyro (given up on AdaFruit)
+//        curang += changInAngle;
+
+        double kpAngle = 0.01;
+        double kdAngle = 0.0;
+
+        double velAngle = (kdAngle * (curang - lastAng)) / interval;
+        double outAngle = (kpAngle*errAngle) - velAngle;
+
+        if (outAngle >= 1){
+            outAngle = 1;
+        }
+
+        if (outAngle <= -1){
+            outAngle = -1;
+        }
+
+        lastAng = curang;
+
+        telemetry.addData("Current Angle", curang);
+        telemetry.addData("Error in Angle", errAngle);
+        telemetry.addData("Motor Output", outAngle);
+        telemetry.addData("Current Direction", compass.getDirection());
+    }
+
+    public double dotProduct(double[] vector1, double[] vector2) {
+        return (vector1[0] * vector2[0]) + (vector1[1] * vector2[1]) + (vector1[2] * vector2[2]);
+    }
+
+    public double[] crossProduct(double[] vector1, double[] vector2) {
+        double[] cp = new double[3];
+        cp[0] = (vector1[1] * vector2[2]) - (vector1[2] * vector2[1]);
+        cp[1] = (vector1[2] * vector2[0]) - (vector1[0] * vector2[2]);
+        cp[2] = (vector1[0] * vector2[1]) - (vector1[1] * vector2[0]);
+
+        return cp;
+    }
+
+    public double[] unitVector(double[] vector1) {
+        double[] uv = new double[3];
+
+        for (int i = 0; i <= 2; i++) {
+            uv[i] = vector1[i] / dotProduct(vector1, vector1);
+        }
+        return uv;
+    }
+
 }

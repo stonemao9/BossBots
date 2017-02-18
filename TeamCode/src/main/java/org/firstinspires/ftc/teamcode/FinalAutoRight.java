@@ -45,7 +45,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Team 524 Autonomous", group = "Iterative Opmode")
 // @Autonomous(...) is the other common choice
 @Disabled
-public class FinalAutoRight extends MecanumOpMode {
+public class FinalAutoRight extends AutoMecanumOpMode {
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor belt;
@@ -100,6 +100,8 @@ public class FinalAutoRight extends MecanumOpMode {
         motor4.setDirection(DcMotorSimple.Direction.REVERSE);
         idleGear = hardwareMap.servo.get("idleGear");
         teamColor = "b";
+        compass = hardwareMap.compassSensor.get("compass");
+
 
         kp = 1;
         kd = 0.0;
@@ -300,86 +302,6 @@ public class FinalAutoRight extends MecanumOpMode {
     @Override
     public void stop() {
 
-    }
-
-    //takes in setpoint, takes robot forward, returns motor power
-    public double goToPosition(double setpointx) {
-        setx = setpointx; //x position that is not changing
-        final double CIRCUMFERENCE = 0.618422514; //DO NOT CHANGE
-        tottotx = ((((motor2.getCurrentPosition() - startingEncoderMotor2))) / 1426) * CIRCUMFERENCE;
-
-        //should it be <= someNumber instead of ==someNumber? (will the code stop when getRuntime()%interval != 0?)
-        if (runtime.milliseconds() % interval <= 19) {
-            curx = tottotx - totx;
-
-            velx = (kd * (curx - lastx)) / interval;
-
-            outx = (kp * (setx - curx)) - velx;
-
-            if (outx >= 1) {
-                outx = 1;
-            }
-
-            if (outx <= -1) {
-                outx = -1;
-            }
-            telemetry.addData("outx", outx);
-            driveAngle(Math.PI / 2, outx);
-        }
-        telemetry.addData("outX", Math.round(outx * 10) / (double) 10);
-        return Math.round(outx * 10) / (double) 10;
-    }
-
-    double lastAng;
-
-    //turn the robot by angle in RADIANS
-    public void turnByAngle(double setAngle){
-        double curang = 0;
-        double errAngle = setAngle - curang;
-        double changInAngle = angleZ; //get it from the Modern Robotics Gyro (given up on AdaFruit)
-        curang += changInAngle;
-
-        double kpAngle = 0.01;
-        double kdAngle = 0.0;
-
-        double velAngle = (kdAngle * (curang - lastAng)) / interval;
-        double outAngle = (kpAngle*errAngle) - velAngle;
-
-        if (outAngle >= 1){
-            outAngle = 1;
-        }
-
-        if (outAngle <= -1){
-            outAngle = -1;
-        }
-
-        lastAng = curang;
-
-        telemetry.addData("Current Angle", curang);
-        telemetry.addData("Error in Angle", errAngle);
-        telemetry.addData("Motor Output", outAngle);
-    }
-
-    public double dotProduct(double[] vector1, double[] vector2) {
-        return (vector1[0] * vector2[0]) + (vector1[1] * vector2[1]) + (vector1[2] * vector2[2]);
-    }
-
-    public double[] crossProduct(double[] vector1, double[] vector2) {
-        double[] cp = new double[3];
-        cp[0] = (vector1[1] * vector2[2]) - (vector1[2] * vector2[1]);
-        cp[1] = (vector1[2] * vector2[0]) - (vector1[0] * vector2[2]);
-        cp[2] = (vector1[0] * vector2[1]) - (vector1[1] * vector2[0]);
-
-        return cp;
-    }
-
-    public double[] unitVector(double[] vector1) {
-        double[] uv = new double[3];
-
-        for (int i = 0; i <= 2; i++) {
-            uv[i] = vector1[i] / dotProduct(vector1, vector1);
-        }
-        return uv;
     }
 
     public void detectColor() {
