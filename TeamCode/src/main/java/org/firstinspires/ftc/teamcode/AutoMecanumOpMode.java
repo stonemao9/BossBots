@@ -99,8 +99,9 @@ public abstract class AutoMecanumOpMode extends MecanumOpMode {
     double lastAng;
 
     //turn the robot by angle in RADIANS
-    public void turnByAngle(double setAngle){
-        double curang = compass.getDirection();
+    public void turnByAngle(double setAngle) throws InterruptedException {
+        currentAngle();
+        double curang = currentAngularPosition;
         double errAngle = setAngle - curang;
 //        double changInAngle = angleZ; //get it from the Modern Robotics Gyro (given up on AdaFruit)
 //        curang += changInAngle;
@@ -124,7 +125,29 @@ public abstract class AutoMecanumOpMode extends MecanumOpMode {
         telemetry.addData("Current Angle", curang);
         telemetry.addData("Error in Angle", errAngle);
         telemetry.addData("Motor Output", outAngle);
-        telemetry.addData("Current Direction", compass.getDirection());
+        telemetry.addData("Current Direction", currentAngularPosition);
+    }
+
+    private double compassReadingInitial = compass.getDirection();
+    public double currentAngle = compass.getDirection();
+    public int n = 0; //counts how many times compass.getdirection() has reset
+    public double currentAngularPosition;
+
+    public void currentAngle() throws InterruptedException {
+        double compassReadingCurrent = compass.getDirection();
+        double changeInAngle = compassReadingCurrent - compassReadingInitial;
+
+        currentAngle += changeInAngle;
+
+        if (currentAngle > 320){
+            currentAngle = 360 - currentAngle;
+            n++;
+        }
+
+        compassReadingInitial = compassReadingCurrent;
+
+        currentAngularPosition = (n * 360) + currentAngle;
+        Thread.sleep(interval);
     }
 
     public double dotProduct(double[] vector1, double[] vector2) {
