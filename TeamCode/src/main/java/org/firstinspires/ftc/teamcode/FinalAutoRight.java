@@ -99,7 +99,7 @@ public class FinalAutoRight extends AutoMecanumOpMode {
         compass = hardwareMap.compassSensor.get("compass");
         ultra = hardwareMap.ultrasonicSensor.get("ultra");
         vltageSensor = hardwareMap.voltageSensor.get("vltageS2ensor");
-        autoShooter = hardwareMap.dcMotor.get("autoShooter");
+        autoShooter = hardwareMap.dcMotor.get("shooter");
 
         etKeeper = hardwareMap.servo.get("etKeeper");
         etKeeper.setPosition(0);
@@ -161,6 +161,9 @@ public class FinalAutoRight extends AutoMecanumOpMode {
     private boolean task2 = false;
     private boolean task3 = false;
     private boolean task4 = false;
+    private boolean task5 = false;
+    private boolean task6 = false;
+    private boolean task7 = false;
     private double ninetydeg;
     private double test2;
     private double tempTime = 0;
@@ -169,14 +172,14 @@ public class FinalAutoRight extends AutoMecanumOpMode {
     public void loop() {
         telemetry.addData("Encoder Flywheel",shooter.getCurrentPosition());
         if (!task0) {
-            totx=tottotx;
-            task0=true;
-            ninetydeg=compass.getDirection();
+            totx = tottotx;
+            task0 = true;
+            ninetydeg = compass.getDirection();
         } else if(!task1){
             if(goToPosition(4.2)<0.1){
-                task1=true;
+                task1 = true;
                 driveAngle(0,0);
-                tempTime=runtime.milliseconds();
+                tempTime = runtime.milliseconds();
             }
             telemetry.addData("Task","Going forward 4.4 ft");
         } else if(!task2){
@@ -188,7 +191,8 @@ public class FinalAutoRight extends AutoMecanumOpMode {
                 motor4.setPower(-SPEED);
             } else {
                 driveAngle(0,0);
-                task2=true;
+                task2 = true;
+                totx = tottotx;
             }
             telemetry.addData("Task","Turning... At "+compass.getDirection()+" and moving towards "+ninetydeg);
         } else if(!task3){
@@ -196,15 +200,54 @@ public class FinalAutoRight extends AutoMecanumOpMode {
                 driveRight();
             } else {
                 driveAngle(0,0);
-                task3=true;
+                task3 = true;
             }
-        } else if(!task4){
+        }
+
+        else if(!task4){
             try {
                 detectColor();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            task4=true;
+
+            ninetydeg = compass.getDirection();
+            task4 = true;
+        }
+
+        else if (!task5) {
+            if (ultra.getUltrasonicLevel() < 28) {
+                driveLeft();
+            }
+
+            else {
+                driveAngle(0,0);
+                totx = tottotx;
+                task5 = true;
+            }
+        }
+
+        else if (!task6){
+            if(compass.getDirection()>ninetydeg-180){ //Rotate
+                final double SPEED=-0.4;
+                motor1.setPower(-SPEED);
+                motor2.setPower(SPEED);
+                motor3.setPower(SPEED);
+                motor4.setPower(-SPEED);
+            } else {
+                driveAngle(0, 0);
+                task6 = true;
+                totx = tottotx;
+            }
+        }
+
+        else if (!task7){
+            try {
+                hardAutoShooter();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            task7 = true;
         }
         else {
             telemetry.addData("Task","done");

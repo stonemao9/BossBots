@@ -101,7 +101,6 @@ public class TeleopTeam524 extends MecanumOpMode {
         eightyTwenty.setDirection(DcMotorSimple.Direction.REVERSE);
 
         ballKeeper = hardwareMap.servo.get("ballKeeper");
-        flicker = hardwareMap.servo.get("flicker");
         etKeeper = hardwareMap.servo.get("etKeeper");
         idleGear = hardwareMap.servo.get("idleGear");
         compass = hardwareMap.compassSensor.get("compass");
@@ -109,7 +108,6 @@ public class TeleopTeam524 extends MecanumOpMode {
         teamColor = "r";
 
         ballKeeper.setPosition(0);
-        flicker.setPosition(0.55);
         etKeeper.setPosition(0);
         idleGear.setPosition(0.5);
     }
@@ -153,11 +151,6 @@ public class TeleopTeam524 extends MecanumOpMode {
             lexanShooter.setPower(0.5);
         else
             lexanShooter.setPower(0);
-
-        if (gamepad2.a)
-            flicker.setPosition(0.2);
-        else
-            flicker.setPosition(0.55);
 
         if (gamepad2.b) {
             idle = !idle;

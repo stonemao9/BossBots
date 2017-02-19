@@ -44,7 +44,7 @@ public abstract class AutoMecanumOpMode extends MecanumOpMode {
     public double initAfterRT;
     public CompassSensor compass;
     public VoltageSensor vltageSensor;
-    public DcMotor autoShooter;
+    public DcMotor autoShooter; //WILL THIS DRIVE THE CORRECT MOTOR???
 
 
     //PID variables
@@ -180,9 +180,6 @@ public abstract class AutoMecanumOpMode extends MecanumOpMode {
         Thread.sleep(interval);
     }
 
-    public void shoot(){
-
-    }
 
     public double dotProduct(double[] vector1, double[] vector2) {
         return (vector1[0] * vector2[0]) + (vector1[1] * vector2[1]) + (vector1[2] * vector2[2]);
@@ -206,6 +203,7 @@ public abstract class AutoMecanumOpMode extends MecanumOpMode {
         return uv;
     }
     public boolean done=false;
+
     public void driveRight() {
             motor1.setPower(0.5);
             motor2.setPower(-0.15);
@@ -213,12 +211,18 @@ public abstract class AutoMecanumOpMode extends MecanumOpMode {
             motor4.setPower(-0.15);
     }
 
-    public void hardAutoShooter(){
+    public void driveLeft() {
+            motor1.setPower(-0.5);
+            motor2.setPower(0.15);
+            motor3.setPower(-0.5);
+            motor4.setPower(0.15);
+    }
+
+
+
+    public void hardAutoShooter() throws InterruptedException {
         autoShooter.setPower(0.5);
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        Thread.sleep(3000);
+        autoShooter.setPower(0);
     }
 }

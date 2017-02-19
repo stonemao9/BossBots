@@ -101,7 +101,7 @@ public class FinalAutoLeft extends AutoMecanumOpMode {
         teamColor = "b";
         compass = hardwareMap.compassSensor.get("compass");
         vltageSensor = hardwareMap.voltageSensor.get("vltageSensor");
-        autoShooter = hardwareMap.dcMotor.get("autoShooter");
+        autoShooter = hardwareMap.dcMotor.get("shooter");
 
         double batteryVoltage = vltageSensor.getVoltage();
         kp = 0.30 - (batteryVoltage * 0.006);
