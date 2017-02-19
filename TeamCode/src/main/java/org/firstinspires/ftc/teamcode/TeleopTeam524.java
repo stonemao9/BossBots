@@ -102,7 +102,7 @@ public class TeleopTeam524 extends MecanumOpMode {
 
         ballKeeper = hardwareMap.servo.get("ballKeeper");
         flicker = hardwareMap.servo.get("flicker");
-        etKeeper = hardwareMap.servo.get("liftKeep");
+        etKeeper = hardwareMap.servo.get("etKeeper");
         idleGear = hardwareMap.servo.get("idleGear");
         compass = hardwareMap.compassSensor.get("compass");
 
@@ -110,8 +110,8 @@ public class TeleopTeam524 extends MecanumOpMode {
 
         ballKeeper.setPosition(0);
         flicker.setPosition(0.55);
-        etKeeper.setPosition(0.72);
-        idleGear.setPosition(0.72);
+        etKeeper.setPosition(0);
+        idleGear.setPosition(0.5);
     }
 
     /*
@@ -170,7 +170,7 @@ public class TeleopTeam524 extends MecanumOpMode {
         if (idle)
             idleGear.setPosition(1.1);
         else
-            idleGear.setPosition(0.72);
+            idleGear.setPosition(0.5);
 
         //Servo for releasing the eighty-twenty
         if (gamepad2.y)
