@@ -321,6 +321,22 @@ public class FinalAutoRight extends AutoMecanumOpMode {
         }
     }
 
+    public void currentAngle() {
+        double compassReadingCurrent = compass.getDirection();
+        double changeInAngle = compassReadingCurrent - compassReadingInitial;
+
+        ppcurrentAngle += changeInAngle;
+
+        if (ppcurrentAngle > 320){
+            ppcurrentAngle = 360 - ppcurrentAngle;
+            n++;
+        }
+
+        compassReadingInitial = compassReadingCurrent;
+
+        currentAngularPosition = (n * 360) + ppcurrentAngle;
+    }
+
     //True-Red, False-Blue
     public boolean color(ColorSensor c) {
 

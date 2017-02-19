@@ -91,6 +91,10 @@ public abstract class AutoMecanumOpMode extends MecanumOpMode {
             if (outx <= -1) {
                 outx = -1;
             }
+
+            if (outx == NaN) {
+                outx = 0;
+            }
             telemetry.addData("outx", outx);
             driveAngle(Math.PI / 2, outx);
         }
@@ -98,14 +102,14 @@ public abstract class AutoMecanumOpMode extends MecanumOpMode {
         return Math.round(outx * 10) / (double) 10;
     }
 
-    double lastAng;
+    public double lastAng;
 
     public double compassReadingInitial;
     public double ppcurrentAngle;
     public int n = 0; //counts how many times compass.getdirection() has reset
     public double currentAngularPosition;
     public double setpoint;
-    public boolean setOnce=true;
+    public boolean setOnce = true;
     //turn the robot by angle in DEGREES
     public double turnByAngle(double setAngle) throws InterruptedException {
         if(setOnce){
@@ -113,6 +117,7 @@ public abstract class AutoMecanumOpMode extends MecanumOpMode {
             setpoint = currentAngularPosition + setAngle;
             setOnce = false;
         }
+
         double curang = currentAngularPosition;
         telemetry.addData("setpoint",setpoint);
         telemetry.addData("curang",curang);
