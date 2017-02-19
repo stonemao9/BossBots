@@ -108,7 +108,6 @@ public class TeleopTeam524 extends MecanumOpMode {
         teamColor = "r";
 
         ballKeeper.setPosition(0);
-        flicker.setPosition(0.55);
         etKeeper.setPosition(0);
         idleGear.setPosition(0.5);
     }
@@ -152,11 +151,6 @@ public class TeleopTeam524 extends MecanumOpMode {
             lexanShooter.setPower(0.5);
         else
             lexanShooter.setPower(0);
-
-        if (gamepad2.a)
-            flicker.setPosition(0.2);
-        else
-            flicker.setPosition(0.55);
 
         if (gamepad2.b) {
             idle = !idle;
