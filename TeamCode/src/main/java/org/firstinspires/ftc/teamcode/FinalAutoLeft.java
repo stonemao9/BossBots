@@ -100,12 +100,9 @@ public class FinalAutoLeft extends AutoMecanumOpMode {
         idleGear = hardwareMap.servo.get("idleGear");
         teamColor = "b";
         compass = hardwareMap.compassSensor.get("compass");
-        vltageSensor = hardwareMap.voltageSensor.get("vltageSensor");
 
-
-        batteryVoltage = vltageSensor.getVoltage();
-        kp = 0.30 - (batteryVoltage * 0.006);
-        kd = 0.01;
+        kp = 0.23;
+        kd = 0.02;
 
         //NXT
         colorLeft = hardwareMap.colorSensor.get("color");
