@@ -80,6 +80,7 @@ public class ColorSensorTest extends AutoMecanumOpMode
     @Override
     public void loop() {
         telemetry.addData("Status", "Running: " + runtime.toString());
+        driveRight();
         try {
             detectColor();
         } catch (InterruptedException e) {

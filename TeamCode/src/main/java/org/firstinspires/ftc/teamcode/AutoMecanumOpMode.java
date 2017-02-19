@@ -5,6 +5,7 @@ import android.hardware.Sensor;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.UltrasonicSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cCompassSensor;
 import com.qualcomm.robotcore.hardware.CompassSensor;
@@ -12,7 +13,7 @@ import com.qualcomm.robotcore.hardware.CompassSensor;
 import static java.lang.Double.NaN;
 
 /**
- *Created by chscompsci on 2/17/2017.
+ * Created by chscompsci on 2/17/2017.
  */
 
 public abstract class AutoMecanumOpMode extends MecanumOpMode {
@@ -23,6 +24,7 @@ public abstract class AutoMecanumOpMode extends MecanumOpMode {
     public DcMotor belt;
     public DcMotor eightyTwenty;
     public DcMotor sweeper;
+    public UltrasonicSensor ultra;
     public Servo idleGear;
 
 
@@ -48,22 +50,41 @@ public abstract class AutoMecanumOpMode extends MecanumOpMode {
     public long interval; //sensor sample period (1/sample frequency)
 
     private boolean pressedBeacon = false;
-    private int numTimes=0;
+    private int numTimes = 0;
 
     public void detectColor() throws InterruptedException {
         numTimes++; // Calculate number of times this method has been called
         telemetry.addData("RGB-Left", color1.red() + ", " + color1.green() + ", " + color1.blue());
-        telemetry.addData("Color Sense", color() + " NumTimes: "+numTimes);
+        telemetry.addData("Color Sense", color() + " NumTimes: " + numTimes);
         Thread.sleep(500); // Wait for 500 millisecond to detect color
-        telemetry.addData("Color Sense", color() + " NumTimes: AFTER 500 MILLI"+numTimes);
+        telemetry.addData("Color Sense", color() + " NumTimes: AFTER 500 MILLI" + numTimes);
         // Checks if pressed beacon and right color
         if (color() == teamColor && !pressedBeacon) {
-            driveAngle(0,1);
-           // driveAngle(Math.PI/2, 1);
-            Thread.sleep(200);
-            driveAngle(0,0);
-            pressedBeacon=true;
+            driveAngle(0, 1);
+            // driveAngle(Math.PI/2, 1);
+            turn(1);
+            pressedBeacon = true;
+        } else if (color() != teamColor && !pressedBeacon) {
+            turn(-1);
+            pressedBeacon = true;
         }
+    }
+
+    //cw=1, ccw = -1
+    public void turn(int cw) throws InterruptedException {
+        motor1.setPower(1 * cw);
+        motor4.setPower(1 * cw);
+        motor2.setPower(-1 * cw);
+        motor3.setPower(-1 * cw);
+        Thread.sleep(300);
+        driveAngle(0, 0);
+        Thread.sleep(700);
+        motor1.setPower(-1 * cw);
+        motor4.setPower(-1 * cw);
+        motor2.setPower(1 * cw);
+        motor3.setPower(1 * cw);
+        Thread.sleep(300);
+        driveAngle(0, 0);
     }
 
     //Returns True-Red, False-Blue
@@ -75,7 +96,7 @@ public abstract class AutoMecanumOpMode extends MecanumOpMode {
     //takes in setpoint, takes robot forward, returns motor power
     public double goToPosition(double setpointx) {
         setx = setpointx; //x position that is not changing
-        final double CIRCUMFERENCE = 0.618422514*2; //DO NOT CHANGE
+        final double CIRCUMFERENCE = 0.618422514 * 2; //DO NOT CHANGE
         tottotx = ((((motor2.getCurrentPosition() - startingEncoderMotor2))) / 1426) * CIRCUMFERENCE;
 
         //should it be <= someNumber instead of ==someNumber? (will the code stop when getRuntime()%interval != 0?)
@@ -112,9 +133,10 @@ public abstract class AutoMecanumOpMode extends MecanumOpMode {
     public double currentAngularPosition;
     public double setpoint;
     public boolean setOnce = true;
+
     //turn the robot by angle in DEGREES
     public double turnByAngle(double setAngle) throws InterruptedException {
-        if(setOnce){
+        if (setOnce) {
             currentAngle();
             setpoint = currentAngularPosition + setAngle;
             setOnce = false;
@@ -129,17 +151,17 @@ public abstract class AutoMecanumOpMode extends MecanumOpMode {
         double kdAngle = 0.0;
 
         double velAngle = (kdAngle * (curang - lastAng)) / interval;
-        double outAngle = (kpAngle*errAngle) - velAngle;
+        double outAngle = (kpAngle * errAngle) - velAngle;
 
-        if (outAngle >= 1){
+        if (outAngle >= 1) {
             outAngle = 1;
         }
 
-        if (outAngle <= -1){
+        if (outAngle <= -1) {
             outAngle = -1;
         }
 
-        if (outAngle == NaN){
+        if (outAngle == NaN) {
             outAngle = 0;
         }
 
@@ -152,7 +174,7 @@ public abstract class AutoMecanumOpMode extends MecanumOpMode {
 
         telemetry.addData("Current Angle", curang);
         telemetry.addData("Error in Angle", errAngle);
-        telemetry.addData("Motor Output", "kpangle ("+kpAngle+") - "+outAngle);
+        telemetry.addData("Motor Output", "kpangle (" + kpAngle + ") - " + outAngle);
         telemetry.addData("Current Direction", currentAngularPosition);
 
         return Math.round(outx * 10) / (double) 10;
@@ -164,7 +186,7 @@ public abstract class AutoMecanumOpMode extends MecanumOpMode {
 
         ppcurrentAngle += changeInAngle;
 
-        if (ppcurrentAngle > 320){
+        if (ppcurrentAngle > 320) {
             ppcurrentAngle = 360 - ppcurrentAngle;
             n++;
         }
@@ -196,17 +218,15 @@ public abstract class AutoMecanumOpMode extends MecanumOpMode {
         }
         return uv;
     }
-    public boolean done=false;
-    public void driveRight() throws InterruptedException {
-        if (!done) {
-            motor1.setPower(0.5);
-            motor2.setPower(-0.15);
-            motor3.setPower(0.5);
-            motor4.setPower(-0.15);
-        }
-        Thread.sleep(300);
-        done=true;
 
+    public boolean done = false;
+
+    public void driveRight() {
+        int factor = 2;
+        motor1.setPower(0.45 / factor);
+        motor2.setPower(-0.7 / factor);
+        motor3.setPower(0.45 / factor);
+        motor4.setPower(-0.7 / factor);
     }
 
 }

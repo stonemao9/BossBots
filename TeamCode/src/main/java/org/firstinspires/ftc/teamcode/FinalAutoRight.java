@@ -55,6 +55,7 @@ public class FinalAutoRight extends AutoMecanumOpMode {
     private DcMotor eightyTwenty;
     private DcMotor sweeper;
     private Servo idleGear;
+    private Servo etKeeper;
 
 
     //Phone sensors
@@ -62,8 +63,6 @@ public class FinalAutoRight extends AutoMecanumOpMode {
     private Sensor accelerometer;
 
     private DcMotor shooter;
-    private ColorSensor colorLeft;
-    private ColorSensor colorRight;
     private Servo ballKeeper;
     private Servo flicker;
     private double initAfterRT;
@@ -98,16 +97,18 @@ public class FinalAutoRight extends AutoMecanumOpMode {
         idleGear = hardwareMap.servo.get("idleGear");
         teamColor = false;
         compass = hardwareMap.compassSensor.get("compass");
+        ultra = hardwareMap.ultrasonicSensor.get("ultra");
+
+        etKeeper = hardwareMap.servo.get("etKeeper");
+        etKeeper.setPosition(0);
 
 
         kp = 0.23;
         kd = 0.02;
 
         //NXT
-        colorLeft = hardwareMap.colorSensor.get("color");
-        colorLeft.enableLed(false);
-        colorRight = hardwareMap.colorSensor.get("color1");
-        colorRight.enableLed(false);
+        color1 = hardwareMap.colorSensor.get("color");
+        color1.enableLed(false);
         shooter = hardwareMap.dcMotor.get("shooter");
 
         ballKeeper = hardwareMap.servo.get("ballKeeper");
@@ -117,7 +118,16 @@ public class FinalAutoRight extends AutoMecanumOpMode {
         telemetry.addData("Status", "Initialized");
         initAfterRT = runtime.milliseconds();
         startingEncoderMotor2 = motor2.getCurrentPosition();
-        idleGear.setPosition(0.72);
+
+        ballKeeper = hardwareMap.servo.get("ballKeeper");
+        flicker = hardwareMap.servo.get("flicker");
+
+        idleGear = hardwareMap.servo.get("idleGear");
+        compass = hardwareMap.compassSensor.get("compass");
+        ballKeeper.setPosition(0);
+        flicker.setPosition(0.55);
+
+        idleGear.setPosition(0.5);
 
     }
 
@@ -127,10 +137,9 @@ public class FinalAutoRight extends AutoMecanumOpMode {
     @Override
     public void init_loop() {
         telemetry.addData("startingEncoderMotor2", startingEncoderMotor2);
-        telemetry.addData("startingEncoderMotor1", motor1.getCurrentPosition());
-        telemetry.addData("startingEncoderMotor3", motor3.getCurrentPosition());
-        telemetry.addData("startingEncoderMotor4", motor4.getCurrentPosition());
-        telemetry.addData("RGB-Left", colorLeft.red() + ", " + colorLeft.green() + ", " + colorLeft.blue());
+        telemetry.addData("Ultra-",ultra.getUltrasonicLevel());
+        telemetry.addData("RGB-Left", color1.red() + ", " + color1.green() + ", " + color1.blue());
+        telemetry.addData("Compass",compass.getDirection());
     }
 
     /*
@@ -150,36 +159,54 @@ public class FinalAutoRight extends AutoMecanumOpMode {
     private boolean task2 = false;
     private boolean task3 = false;
     private boolean task4 = false;
-    private boolean task5 = false;
-    private boolean task6 = false;
-    private boolean task7 = false;
-    private boolean task8 = false;
-    private boolean task9 = false;
-    private boolean task10 = false;
-    private boolean task11 = false;
-    private boolean task12 = false;
-    private boolean task13 = false;
-    private boolean task14 = false;
-    private boolean task15 = false;
-    private boolean task16 = false;
+    private double ninetydeg;
     private double test2;
     private double tempTime = 0;
 
     @Override
     public void loop() {
-
+        telemetry.addData("Encoder Flywheel",shooter.getCurrentPosition());
         if (!task0) {
             totx=tottotx;
             task0=true;
+            ninetydeg=compass.getDirection();
         } else if(!task1){
-            if(goToPosition(4.1)<0.1){
+            if(goToPosition(4.2)<0.1){
                 task1=true;
                 driveAngle(0,0);
                 tempTime=runtime.milliseconds();
             }
-            telemetry.addData("Task","Going forward 6 cm");
-        } else {
+            telemetry.addData("Task","Going forward 4.4 ft");
+        } else if(!task2){
+            if(compass.getDirection()>ninetydeg-11){ //Rotate
+                final double SPEED=-0.4;
+                motor1.setPower(-SPEED);
+                motor2.setPower(SPEED);
+                motor3.setPower(SPEED);
+                motor4.setPower(-SPEED);
+            } else {
+                driveAngle(0,0);
+                task2=true;
+            }
+            telemetry.addData("Task","Turning... At "+compass.getDirection()+" and moving towards "+ninetydeg);
+        } else if(!task3){
+            if(ultra.getUltrasonicLevel()>21){
+                driveRight();
+            } else {
+                driveAngle(0,0);
+                task3=true;
+            }
+        } else if(!task4){
+            try {
+                detectColor();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            task4=true;
+        }
+        else {
             telemetry.addData("Task","done");
+            telemetry.addData("Ultra-",ultra.getUltrasonicLevel());
             telemetry.update();
         }
 
