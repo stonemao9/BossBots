@@ -101,7 +101,6 @@ public class TeleopTeam524 extends MecanumOpMode {
         eightyTwenty.setDirection(DcMotorSimple.Direction.REVERSE);
 
         ballKeeper = hardwareMap.servo.get("ballKeeper");
-        flicker = hardwareMap.servo.get("flicker");
         etKeeper = hardwareMap.servo.get("etKeeper");
         idleGear = hardwareMap.servo.get("idleGear");
         compass = hardwareMap.compassSensor.get("compass");
