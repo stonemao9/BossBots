@@ -43,6 +43,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import static java.lang.Boolean.TRUE;
+import static java.lang.Double.NaN;
 
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Team 524 Autonomous", group = "Iterative Opmode")
 // @Autonomous(...) is the other common choice
@@ -60,18 +61,12 @@ public class FinalAutoRight extends AutoMecanumOpMode {
     private Sensor magnetometer;
     private Sensor accelerometer;
 
-    private String teamColor;
     private DcMotor shooter;
     private ColorSensor colorLeft;
     private ColorSensor colorRight;
     private Servo ballKeeper;
     private Servo flicker;
     private double initAfterRT;
-
-    //PID variables
-    private double setx, curx, lastx, tottotx, totx, velx, kp, kd, outx, dx, startingEncoderMotor2, startingEncoderMotor4;
-
-    private long interval; //sensor sample period (1/sample frequency)
 
     /*
     *   Motor position
@@ -101,7 +96,7 @@ public class FinalAutoRight extends AutoMecanumOpMode {
         motor4 = hardwareMap.dcMotor.get("motor4");
         motor4.setDirection(DcMotorSimple.Direction.REVERSE);
         idleGear = hardwareMap.servo.get("idleGear");
-        teamColor = "b";
+        teamColor = false;
         compass = hardwareMap.compassSensor.get("compass");
 
 
@@ -132,6 +127,9 @@ public class FinalAutoRight extends AutoMecanumOpMode {
     @Override
     public void init_loop() {
         telemetry.addData("startingEncoderMotor2", startingEncoderMotor2);
+        telemetry.addData("startingEncoderMotor1", motor1.getCurrentPosition());
+        telemetry.addData("startingEncoderMotor3", motor3.getCurrentPosition());
+        telemetry.addData("startingEncoderMotor4", motor4.getCurrentPosition());
         telemetry.addData("RGB-Left", colorLeft.red() + ", " + colorLeft.green() + ", " + colorLeft.blue());
     }
 
@@ -169,177 +167,22 @@ public class FinalAutoRight extends AutoMecanumOpMode {
 
     @Override
     public void loop() {
-        if(!task1){
-            ppcurrentAngle = compass.getDirection();
-            compassReadingInitial = compass.getDirection();
 
-            task1=true;
-        }
-        else if (!task2 ) {
-            try {
-                test2 = turnByAngle(90);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            if (test2 == 0){
-                task2 = TRUE;
+        if (!task0) {
+            totx=tottotx;
+            task0=true;
+        } else if(!task1){
+            if(goToPosition(4.1)<0.1){
+                task1=true;
                 driveAngle(0,0);
+                tempTime=runtime.milliseconds();
             }
-        }
-//        if(!task0){
-//            if(runtime.milliseconds()<600){
-//                driveAngle(Math.PI/2,0.7);
-//            } else {
-//                driveAngle(Math.PI/2,0);
-//                tempTime=runtime.milliseconds();
-//                task0=true;
-//            }
-//            telemetry.addData("Task","Forward");
-//        }
-//        else if(!task1){
-//            if(runtime.milliseconds()<tempTime+600){
-//                motor1.setPower(-0.5);
-//                motor2.setPower(0.5);
-//                motor3.setPower(0.5);
-//                motor4.setPower(-0.5);
-//            } else {
-//                motor1.setPower(0);
-//                motor2.setPower(0);
-//                motor3.setPower(0);
-//                motor4.setPower(0);
-//                tempTime=runtime.milliseconds();
-//                task1=true;
-//            }
-//            telemetry.addData("Task","Turning");
-//        }
-//         else if (!task2)  {
-//            totx = tottotx;
-//            task2=true;
-//
-//        } else if(!task3){
-//            if(goToPosition(1.52)<0.13){
-//                task3=true;
-//                driveAngle(0,0);
-//                tempTime=runtime.milliseconds();
-//            }
-//            telemetry.addData("totx",totx);
-//            telemetry.addData("tottotx",tottotx);
-//            telemetry.addData("Task","Moving towards beacon");
-//        } else if(!task4){
-//            if(runtime.milliseconds()<tempTime+600){
-//                motor1.setPower(0.5);
-//                motor2.setPower(-0.5);
-//                motor3.setPower(-0.5);
-//                motor4.setPower(0.5);
-//            } else {
-//                motor1.setPower(0);
-//                motor2.setPower(0);
-//                motor3.setPower(0);
-//                motor4.setPower(0);
-//                tempTime=runtime.milliseconds();
-//                task4=true;
-//            }
-//            telemetry.addData("Task","Turning");
-//        } else if(!task5){
-//            if(runtime.milliseconds()<tempTime+1100){
-//                driveAngle(1*Math.PI/180,0.6);
-//            } else {
-//                driveAngle(0,0);
-//                tempTime=runtime.milliseconds();
-//                task5=true;
-//            }
-//            telemetry.addData("Task","Moving at zero degrees");
-//        } else if(!task8){
-//            telemetry.addData("color!!!",sameColor(teamColor,color));
-//            if(sameColor(teamColor,color)){
-//                if(runtime.milliseconds()<tempTime+600){
-//                    driveAngle(0,1);
-//                } else {
-//                    driveAngle(0,0);
-//                    task8 = true;
-//                    task9 = true;
-//                    task10 = true;
-//                }
-//            } else {
-//                telemetry.addData("color123123",false);
-//                task8 = true;
-//            }
-//        } else if(!task9){
-//            totx = tottotx;
-//            task9=true;
-//        } else if(!task10){
-//            telemetry.addData("totx",totx);
-//            telemetry.addData("Task","Moving away from wrong color");
-//            telemetry.addData("tottotx",tottotx);
-//            if(goToPosition(-0.3)<0.13){
-//                task10=true;
-//                driveAngle(0,0);
-//                tempTime=runtime.milliseconds();
-//            }
-//        }
-    }
-
-    private void press(double tempTime) {
-        if (runtime.milliseconds() < tempTime + 600) {
-            driveAngle(0, 1);
+            telemetry.addData("Task","Going forward 6 cm");
         } else {
-            driveAngle(0, 0);
-        }
-    }
-
-    private boolean sameColor(String teamColor, ColorSensor color) {
-        if (teamColor.equals("r")) {
-            if (color.red() > color.blue()) {
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            if (color.red() < color.blue()) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-    }
-
-    /*
-     * Code to run ONCE after the driver hits STOP
-     */
-    @Override
-    public void stop() {
-
-    }
-
-    public void detectColor() {
-        telemetry.addData("RGB-Left", colorLeft.red() + ", " + colorLeft.green() + ", " + colorLeft.blue());
-        telemetry.addData("RGB-Right", colorRight.red() + ", " + colorRight.green() + ", " + colorRight.blue());
-        telemetry.addData("Color Sense", color(colorLeft) + " " + color(colorRight));
-        if (!color(colorLeft) && color(colorRight)) {
-
-        }
-    }
-
-    public void currentAngle() {
-        double compassReadingCurrent = compass.getDirection();
-        double changeInAngle = compassReadingCurrent - compassReadingInitial;
-
-        ppcurrentAngle += changeInAngle;
-
-        if (ppcurrentAngle > 320){
-            ppcurrentAngle = 360 - ppcurrentAngle;
-            n++;
+            telemetry.addData("Task","done");
+            telemetry.update();
         }
 
-        compassReadingInitial = compassReadingCurrent;
-
-        currentAngularPosition = (n * 360) + ppcurrentAngle;
-    }
-
-    //True-Red, False-Blue
-    public boolean color(ColorSensor c) {
-
-        return c.red() > c.blue();
     }
 }
+

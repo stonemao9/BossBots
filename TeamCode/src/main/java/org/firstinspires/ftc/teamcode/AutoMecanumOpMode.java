@@ -30,7 +30,9 @@ public abstract class AutoMecanumOpMode extends MecanumOpMode {
     public Sensor magnetometer;
     public Sensor accelerometer;
 
+    //True= Red, False=Blue
     public boolean teamColor;
+
     public DcMotor shooter;
     public ColorSensor colorLeft;
     public ColorSensor colorRight;
@@ -41,9 +43,9 @@ public abstract class AutoMecanumOpMode extends MecanumOpMode {
 
 
     //PID variables
-    private double setx, curx, lastx, tottotx, totx, velx, kp, kd, outx, dx, startingEncoderMotor2, startingEncoderMotor4;
+    public double setx, curx, lastx, tottotx, totx, velx, kp, kd, outx, dx, startingEncoderMotor2, startingEncoderMotor4;
 
-    private long interval; //sensor sample period (1/sample frequency)
+    public long interval; //sensor sample period (1/sample frequency)
 
     private boolean pressedBeacon = false;
     private int numTimes=0;
@@ -55,7 +57,7 @@ public abstract class AutoMecanumOpMode extends MecanumOpMode {
         Thread.sleep(500); // Wait for 500 millisecond to detect color
         telemetry.addData("Color Sense", color() + " NumTimes: AFTER 500 MILLI"+numTimes);
         // Checks if pressed beacon and right color
-        if (color() && !pressedBeacon) {
+        if (color() == teamColor && !pressedBeacon) {
             driveAngle(0,1);
            // driveAngle(Math.PI/2, 1);
             Thread.sleep(200);
@@ -98,8 +100,8 @@ public abstract class AutoMecanumOpMode extends MecanumOpMode {
             telemetry.addData("outx", outx);
             driveAngle(Math.PI / 2, outx);
         }
-        telemetry.addData("outX", Math.round(outx * 10) / (double) 10);
-        return Math.round(outx * 10) / (double) 10;
+        telemetry.addData("outX", Math.round(outx * 100) / (double) 100);
+        return Math.round(outx * 100) / (double) 100;
     }
 
     public double lastAng;
@@ -201,9 +203,9 @@ public abstract class AutoMecanumOpMode extends MecanumOpMode {
             motor2.setPower(-0.15);
             motor3.setPower(0.5);
             motor4.setPower(-0.15);
-            Thread.sleep(300);
-            done=true;
         }
+        Thread.sleep(300);
+        done=true;
 
     }
 
