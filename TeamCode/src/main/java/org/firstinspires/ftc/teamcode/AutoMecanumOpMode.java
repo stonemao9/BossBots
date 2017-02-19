@@ -30,7 +30,7 @@ public abstract class AutoMecanumOpMode extends MecanumOpMode {
     public Sensor magnetometer;
     public Sensor accelerometer;
 
-    public String teamColor;
+    public boolean teamColor;
     public DcMotor shooter;
     public ColorSensor colorLeft;
     public ColorSensor colorRight;
@@ -119,8 +119,6 @@ public abstract class AutoMecanumOpMode extends MecanumOpMode {
         }
 
         double curang = currentAngularPosition;
-        telemetry.addData("setpoint",setpoint);
-        telemetry.addData("curang",curang);
         double errAngle = setpoint - curang;
 //        double changInAngle = angleZ; //get it from the Modern Robotics Gyro (given up on AdaFruit)
 //        curang += changInAngle;
@@ -152,7 +150,7 @@ public abstract class AutoMecanumOpMode extends MecanumOpMode {
 
         telemetry.addData("Current Angle", curang);
         telemetry.addData("Error in Angle", errAngle);
-        telemetry.addData("Motor Output", outAngle);
+        telemetry.addData("Motor Output", "kpangle ("+kpAngle+") - "+outAngle);
         telemetry.addData("Current Direction", currentAngularPosition);
 
         return Math.round(outx * 10) / (double) 10;
@@ -195,6 +193,18 @@ public abstract class AutoMecanumOpMode extends MecanumOpMode {
             uv[i] = vector1[i] / dotProduct(vector1, vector1);
         }
         return uv;
+    }
+    public boolean done=false;
+    public void driveRight() throws InterruptedException {
+        if (!done) {
+            motor1.setPower(0.5);
+            motor2.setPower(-0.15);
+            motor3.setPower(0.5);
+            motor4.setPower(-0.15);
+            Thread.sleep(300);
+            done=true;
+        }
+
     }
 
 }

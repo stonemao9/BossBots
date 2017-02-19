@@ -305,35 +305,4 @@ public class FinalAutoLeft extends AutoMecanumOpMode {
     public void stop() {
 
     }
-
-    public void detectColor() {
-        telemetry.addData("RGB-Left", colorLeft.red() + ", " + colorLeft.green() + ", " + colorLeft.blue());
-        telemetry.addData("RGB-Right", colorRight.red() + ", " + colorRight.green() + ", " + colorRight.blue());
-        telemetry.addData("Color Sense", color(colorLeft) + " " + color(colorRight));
-        if (!color(colorLeft) && color(colorRight)) {
-
-        }
-    }
-
-    public void currentAngle() {
-        double compassReadingCurrent = compass.getDirection();
-        double changeInAngle = compassReadingCurrent - compassReadingInitial;
-
-        ppcurrentAngle += changeInAngle;
-
-        if (ppcurrentAngle > 320){
-            ppcurrentAngle = 360 - ppcurrentAngle;
-            n++;
-        }
-
-        compassReadingInitial = compassReadingCurrent;
-
-        currentAngularPosition = (n * 360) + ppcurrentAngle;
-    }
-
-    //True-Red, False-Blue
-    public boolean color(ColorSensor c) {
-
-        return c.red() > c.blue();
-    }
 }
