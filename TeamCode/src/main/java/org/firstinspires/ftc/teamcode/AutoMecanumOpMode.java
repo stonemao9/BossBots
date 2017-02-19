@@ -5,6 +5,7 @@ import android.hardware.Sensor;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cCompassSensor;
 import com.qualcomm.robotcore.hardware.CompassSensor;
@@ -40,11 +41,12 @@ public abstract class AutoMecanumOpMode extends MecanumOpMode {
     public Servo flicker;
     public double initAfterRT;
     public CompassSensor compass;
+    public VoltageSensor vltageSensor;
 
 
     //PID variables
     public double setx, curx, lastx, tottotx, totx, velx, kp, kd, outx, dx, startingEncoderMotor2, startingEncoderMotor4;
-
+    public double batteryVoltage;
     public long interval; //sensor sample period (1/sample frequency)
 
     private boolean pressedBeacon = false;
@@ -101,6 +103,11 @@ public abstract class AutoMecanumOpMode extends MecanumOpMode {
             driveAngle(Math.PI / 2, outx);
         }
         telemetry.addData("outX", Math.round(outx * 100) / (double) 100);
+        telemetry.addData("Tottotx", tottotx);
+        telemetry.addData("Totx", totx);
+        telemetry.addData("Encoder Position", motor2.getCurrentPosition());
+        telemetry.addData("Initial Encoder Position", startingEncoderMotor2);
+        telemetry.addData("outX", Math.round(outx * 10) / (double) 10);
         return Math.round(outx * 100) / (double) 100;
     }
 

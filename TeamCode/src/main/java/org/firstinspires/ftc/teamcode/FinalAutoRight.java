@@ -98,10 +98,11 @@ public class FinalAutoRight extends AutoMecanumOpMode {
         idleGear = hardwareMap.servo.get("idleGear");
         teamColor = false;
         compass = hardwareMap.compassSensor.get("compass");
+        vltageSensor = hardwareMap.voltageSensor.get("vltageSensor");
 
-
-        kp = 0.23;
-        kd = 0.02;
+        batteryVoltage = vltageSensor.getVoltage();
+        kp = 0.30 - (batteryVoltage * 0.006);
+        kd = 0.01;
 
         //NXT
         colorLeft = hardwareMap.colorSensor.get("color");
