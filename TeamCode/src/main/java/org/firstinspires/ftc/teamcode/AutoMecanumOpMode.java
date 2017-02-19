@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.UltrasonicSensor;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cCompassSensor;
 import com.qualcomm.robotcore.hardware.CompassSensor;
@@ -42,6 +43,8 @@ public abstract class AutoMecanumOpMode extends MecanumOpMode {
     public Servo flicker;
     public double initAfterRT;
     public CompassSensor compass;
+    public VoltageSensor vltageSensor;
+    public DcMotor autoShooter;
 
 
     //PID variables
@@ -50,7 +53,7 @@ public abstract class AutoMecanumOpMode extends MecanumOpMode {
     public long interval; //sensor sample period (1/sample frequency)
 
     private boolean pressedBeacon = false;
-    private int numTimes=0;
+    private int numTimes = 0;
 
     public void detectColor() throws InterruptedException {
         numTimes++; // Calculate number of times this method has been called
@@ -64,7 +67,7 @@ public abstract class AutoMecanumOpMode extends MecanumOpMode {
             // driveAngle(Math.PI/2, 1);
             Thread.sleep(200);
             driveAngle(0,0);
-            pressedBeacon=true;
+            pressedBeacon = true;
         }
     }
 
@@ -177,6 +180,10 @@ public abstract class AutoMecanumOpMode extends MecanumOpMode {
         Thread.sleep(interval);
     }
 
+    public void shoot(){
+
+    }
+
     public double dotProduct(double[] vector1, double[] vector2) {
         return (vector1[0] * vector2[0]) + (vector1[1] * vector2[1]) + (vector1[2] * vector2[2]);
     }
@@ -206,4 +213,12 @@ public abstract class AutoMecanumOpMode extends MecanumOpMode {
             motor4.setPower(-0.15);
     }
 
+    public void hardAutoShooter(){
+        autoShooter.setPower(0.5);
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 }

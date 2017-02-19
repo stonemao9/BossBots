@@ -98,12 +98,14 @@ public class FinalAutoRight extends AutoMecanumOpMode {
         teamColor = false;
         compass = hardwareMap.compassSensor.get("compass");
         ultra = hardwareMap.ultrasonicSensor.get("ultra");
+        vltageSensor = hardwareMap.voltageSensor.get("vltageS2ensor");
+        autoShooter = hardwareMap.dcMotor.get("autoShooter");
 
         etKeeper = hardwareMap.servo.get("etKeeper");
         etKeeper.setPosition(0);
 
-
-        kp = 0.23;
+        double batteryVoltage = vltageSensor.getVoltage();
+        kp = 0.30 - (batteryVoltage * 0.006);
         kd = 0.02;
 
         //NXT
