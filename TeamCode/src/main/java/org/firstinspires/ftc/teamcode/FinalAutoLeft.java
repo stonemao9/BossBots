@@ -169,7 +169,7 @@ public class FinalAutoLeft extends AutoMecanumOpMode {
             totx = tottotx;
             task2 = true;
         } else if (!task3) {
-            if (goToPosition(2) ==0) {
+            if (goToPosition(2) == 0) {
                 task3 = true;
                 driveAngle(0, 0);
                 tempTime = runtime.milliseconds();
@@ -179,6 +179,8 @@ public class FinalAutoLeft extends AutoMecanumOpMode {
             telemetry.addData("Task", "Moving towards beacon");
         }
         telemetry.addData("task3",task3);
+
+
 //        if(!task0){
 //            if(runtime.milliseconds()<600){
 //                driveAngle(Math.PI/2,0.7);
@@ -311,6 +313,22 @@ public class FinalAutoLeft extends AutoMecanumOpMode {
         if (!color(colorLeft) && color(colorRight)) {
 
         }
+    }
+
+    public void currentAngle() {
+        double compassReadingCurrent = compass.getDirection();
+        double changeInAngle = compassReadingCurrent - compassReadingInitial;
+
+        ppcurrentAngle += changeInAngle;
+
+        if (ppcurrentAngle > 320){
+            ppcurrentAngle = 360 - ppcurrentAngle;
+            n++;
+        }
+
+        compassReadingInitial = compassReadingCurrent;
+
+        currentAngularPosition = (n * 360) + ppcurrentAngle;
     }
 
     //True-Red, False-Blue
